@@ -74,3 +74,4 @@ if __name__ == "__main__":
 
     response = llm.invoke("간단히 'LLM 연결 성공'이라고만 답해줘.")
     print("response:", response.content)
+    
