@@ -4,7 +4,7 @@ Raw JSON을 가공하여 보고서용 CSV/JSON을 생성하는 스크립트
 
 import argparse
 from pathlib import Path
-from financial_processor import process_financial_data
+from services.financial_processor import process_financial_data
 
 
 def main():

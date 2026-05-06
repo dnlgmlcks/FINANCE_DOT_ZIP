@@ -7,7 +7,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # 프로젝트 루트 디렉토리
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # .env 파일 로드
 env_file = PROJECT_ROOT / ".env"
@@ -35,9 +35,9 @@ target_years_str = os.getenv("TARGET_YEARS", "2023,2022,2021,2020,2019")
 TARGET_YEARS = [int(y.strip()) for y in target_years_str.split(",")]
 
 # 데이터 저장 경로
-DATA_RAW_PATH = Path(os.getenv("DATA_RAW_PATH", "data/raw"))
-DATA_INTERIM_PATH = Path(os.getenv("DATA_INTERIM_PATH", "data/interim"))
-DATA_PROCESSED_PATH = Path(os.getenv("DATA_PROCESSED_PATH", "data/processed"))
+DATA_RAW_PATH = Path(os.getenv("DATA_RAW_PATH", "/data/raw"))
+DATA_INTERIM_PATH = Path(os.getenv("DATA_INTERIM_PATH", "/data/interim"))
+DATA_PROCESSED_PATH = Path(os.getenv("DATA_PROCESSED_PATH", "/data/processed"))
 
 # OpenDART API 기본 URL
 DART_API_BASE = "https://opendart.fss.or.kr/api"

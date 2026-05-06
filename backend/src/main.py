@@ -11,11 +11,13 @@ import time
 # src 디렉토리를 Python 경로에 추가
 sys.path.insert(0, str(Path(__file__).parent))
 
-from config import (
+from core.config import (
     DART_API_KEY, TARGET_STOCK_CODE, TARGET_COMPANY_NAME, 
     TARGET_REPORT_CODE, TARGET_YEARS, ensure_data_dirs, validate_config
 )
-from dart_api import DartAPIClient
+from data.dart_api import DartAPIClient
+
+from data.process_financials import main as process_financials
 
 def main(args):
     """
@@ -120,4 +122,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     success = main(args)
+
+    # 성공 시 전처리 된 재무 정보 파일 생성
+    if success:
+        process_financials()
+
     sys.exit(0 if success else 1)

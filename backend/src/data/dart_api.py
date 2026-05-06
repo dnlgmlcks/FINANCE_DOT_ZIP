@@ -12,7 +12,7 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
-from config import DART_API_BASE, DART_API_KEY, DATA_RAW_PATH, DATA_INTERIM_PATH
+from core.config import DART_API_BASE, DART_API_KEY, DATA_RAW_PATH, DATA_INTERIM_PATH
 
 class DartAPIClient:
     """OpenDART API 클라이언트"""
