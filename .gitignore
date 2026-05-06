@@ -58,3 +58,6 @@ htmlcov/
 # 일시 파일
 *.tmp
 *.temp
+
+# react
+node_modules/
