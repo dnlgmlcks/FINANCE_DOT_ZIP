@@ -53,3 +53,11 @@ def validate_config():
     if not DART_API_KEY:
         raise ValueError("DART_API_KEY가 설정되지 않았습니다. .env 파일을 확인해주세요.")
     return True
+
+# MySQL / Aiven Cloud DB 설정
+MYSQL_HOST = os.getenv("MYSQL_HOST", "")
+MYSQL_PORT = int(os.getenv("MYSQL_PORT", "3306"))
+MYSQL_USER = os.getenv("MYSQL_USER", "")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
+MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "defaultdb")
+MYSQL_SSL_MODE = os.getenv("MYSQL_SSL_MODE", "REQUIRED")
