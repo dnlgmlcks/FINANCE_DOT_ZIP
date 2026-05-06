@@ -61,3 +61,8 @@ htmlcov/
 
 # react
 node_modules/
+
+# OpenDART generated files
+backend/src/data/raw/*.json
+backend/src/data/processed/*.json
+backend/src/data/interim/*.xml
