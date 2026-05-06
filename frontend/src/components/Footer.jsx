@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer className="footer">
-      <p>강아지 귀여워</p>
+      <p>copyright © 2026 Your Company. All rights reserved.</p>
     </footer>
   );
 }
