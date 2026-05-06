@@ -1,15 +1,11 @@
-function Header() {
+import React from 'react';
+
+export function Header({ title }) {
   return (
-    <header className="header">
-      <h1>뽀로로</h1>
-      <nav>
-        <ul>
-          <li>고양이</li>
-          <li>개구리</li>
-          <li>오리</li>
-        </ul>
-      </nav>
+    <header style={{ padding: '16px 0', borderBottom: '1px solid #eee', marginBottom: '20px' }}>
+      <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#333' }}>{title}</h1>
     </header>
   );
 }
+
 export default Header;
