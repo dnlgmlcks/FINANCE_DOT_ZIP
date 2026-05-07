@@ -29,11 +29,11 @@ def search_company(request):
     # get
     if request.method == "GET":
         # print(f'DEBUG | search_company | request: {request.query_params=}')
-        inputVal = request.query_params.keyword
-
+        pass
+    # post
     else :
         # print(f'DEBUG | search_company | request: {request.data=}')
-        inputVal = request.data.keyword
+        pass
     
     # 클래스를 조회하는 로직 추가
     return Response({"data": "test" })    
