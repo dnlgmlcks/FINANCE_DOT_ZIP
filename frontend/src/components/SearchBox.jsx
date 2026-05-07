@@ -48,6 +48,7 @@ export function SearchBox({ onSearch, onKeyIn, searchResults }) {
         } else {
           // 선택된 항목이 없을 때 일반 검색
           onSearch(keyword);
+          onKeyIn("");
         }
         break;
       case "Escape":

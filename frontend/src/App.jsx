@@ -4,6 +4,9 @@ import SearchBox from './components/SearchBox';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 
+// CSS
+import './index.css'
+
 import { BeatLoader } from "react-spinners";  // 로딩 스피너 라이브러리
 
 import { gfn_transaction } from './util/common-util';
