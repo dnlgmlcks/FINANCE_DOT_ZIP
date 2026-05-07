@@ -1,6 +1,7 @@
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 TEMP_COMPANY_DATA = [
     {"CORP_ID": "001", "CORP_NAME": "삼성전자", "TICKER": "005930"},
@@ -10,17 +11,29 @@ TEMP_COMPANY_DATA = [
     {"CORP_ID": "005", "CORP_NAME": "카카오", "TICKER": "035720"},
 ]
 
-class TestAPIView(APIView):
-    def get(self, request):
-        return Response({"data": "DRF GET 연결 성공!"})
+@api_view(['GET', 'POST'])
+def test_api(request):
+
+    method = request.method
+    return Response({"data": f"DRF {method} 연결 성공!"})
     
-    def post(self, request):
-        return Response({"data": "DRF POST 연결 성공!"})
-    
+@api_view(['GET', 'POST'])
 # 임시 데이터 반환 API (초기 화면에서 기업 리스트 받아올 때 사용)
-class InitDataAPIView(APIView):
-    def get(self, request):
-        return Response({"data": TEMP_COMPANY_DATA})
+def init_data(request):
+    # 데이
+    return Response({"data": TEMP_COMPANY_DATA})
     
-    def post(self, request):
-        return Response({"data": TEMP_COMPANY_DATA})
+# 기업 조회
+@api_view(['GET', 'POST'])
+def search_company(request):
+    # get
+    if request.method == "GET":
+        # print(f'DEBUG | search_company | request: {request.query_params=}')
+        inputVal = request.query_params.keyword
+
+    else :
+        # print(f'DEBUG | search_company | request: {request.data=}')
+        inputVal = request.data.keyword
+    
+    # 클래스를 조회하는 로직 추가
+    return Response({"data": "test" })    
