@@ -1,0 +1,201 @@
+/* ── AIChatPanel.css ── */
+
+.acp-panel {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  background: #14161d;
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
+  font-size: 13px;
+  color: #dde0ee;
+  overflow: hidden;
+}
+
+/* 헤더 */
+.acp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid #1c1f2e;
+  flex-shrink: 0;
+}
+
+.acp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acp-bot-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #1d2236;
+  border: 1px solid #272e48;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7b9fff;
+}
+
+.acp-header-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #e4e7f5;
+}
+
+/* 바디 */
+.acp-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1e2235 transparent;
+}
+.acp-body::-webkit-scrollbar { width: 4px; }
+.acp-body::-webkit-scrollbar-thumb { background: #1e2235; border-radius: 4px; }
+
+/* 메시지 목록 */
+.acp-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 16px;
+}
+
+/* 메시지 행 */
+.acp-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.acp-row.user {
+  flex-direction: row-reverse;
+}
+
+/* 아바타 */
+.acp-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.acp-avatar.bot {
+  background: #1d2236;
+  border: 1px solid #272e48;
+  color: #7b9fff;
+}
+.acp-avatar.user {
+  background: #263080;
+  border: 1px solid #3040a0;
+  color: #a0b4ff;
+}
+
+/* 말풍선 + 시간 묶음 */
+.acp-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 76%;
+}
+.acp-row.user .acp-col {
+  align-items: flex-end;
+}
+
+.acp-bubble {
+  padding: 11px 14px;
+  border-radius: 14px;
+  line-height: 1.65;
+  font-size: 13.5px;
+}
+.acp-row.assistant .acp-bubble {
+  background: #1c2030;
+  color: #cdd2e8;
+  border-top-left-radius: 4px;
+}
+.acp-row.user .acp-bubble {
+  background: #3d52c4;
+  color: #e8ecff;
+  border-top-right-radius: 4px;
+}
+
+.acp-time {
+  font-size: 11px;
+  color: #363d58;
+  padding: 0 2px;
+}
+
+/* 타이핑 인디케이터 */
+.acp-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+}
+
+.acp-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5b6a9e;
+  animation: acp-bounce 1.2s infinite;
+}
+.acp-dot:nth-child(2) { animation-delay: 0.2s; }
+.acp-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes acp-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+/* 입력창 */
+.acp-input-area {
+  padding: 10px 12px 14px;
+  border-top: 1px solid #1c1f2e;
+  flex-shrink: 0;
+}
+
+.acp-input-box {
+  display: flex;
+  align-items: center;
+  background: #1c2030;
+  border: 1px solid #252b40;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.acp-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #cdd2e8;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 13px 14px;
+}
+.acp-input::placeholder { color: #363d58; }
+.acp-input:disabled { opacity: 0.5; }
+                      
+.acp-send-btn {
+  width: 46px;
+  height: 46px;
+  background: #2e44b8;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #8aa0ff;
+  flex-shrink: 0;
+  margin: 3px;
+  border-radius: 8px;
+  transition: background 0.15s, opacity 0.15s;
+}
+.acp-send-btn:hover:not(:disabled) { background: #3d52c4; }
+.acp-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
