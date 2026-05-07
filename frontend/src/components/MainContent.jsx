@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Report from './Report';
-import ChatArea from './ChatArea';
+import AIChatPanel from "./ChatArea/AIchatpanel";
 
 function MainContent() {
   const [message, setMessage] = useState('오늘저녁 뭐먹지. 굶을까, Finance.zip');
@@ -39,10 +39,6 @@ function MainContent() {
     // }
   };
 
-  const handleSendMessage = (messageText) => {
-    console.log('대화 메시지 전송:', messageText);
-  };
-
 
   return (
     <main className="main-content">
@@ -58,12 +54,10 @@ function MainContent() {
           )}
         </div>
 
-        {/* 우측: 대화 영역 (isChatExpanded 상태에 따라 보이기/숨기기 처리) */}
-        {(
-          <div style={{ flex: '0 0 33%', position: 'sticky', top: '20px', transition: 'all 0.3s ease' }}>
-            <ChatArea onSendMessage={handleSendMessage} />
-          </div>
-        )}
+        {/* 우측: 대화 영역 */}
+        <div style={{ flex: '0 0 33%', position: 'sticky', top: '20px', transition: 'all 0.3s ease' }}>
+          <AIChatPanel />
+        </div>
         
         {/* 토글(Expander) 버튼: 화면 우측 상단이나 분할 영역 사이에 위치 */}
         {reportData && (
