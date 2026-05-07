@@ -81,21 +81,24 @@ DATA_PROCESSED_PATH=data/processed
 
 ```bash
 # 기본 실행 (캐시된 corp_code.zip 사용)
-python src/main.py
+python backend/src/main.py
 
 # corp_code.zip 재다운로드 (캐시 무시)
-python src/main.py --refresh-corp-code
+python backend/src/main.py --refresh-corp-code
 ```
 
 ## 프로젝트 구조
 
 ```
 FINANCE_DOT_ZIP/
-├─ src/
-│  ├─ __init__.py
-│  ├─ config.py          # 환경 변수 및 설정 관리
-│  ├─ dart_api.py        # OpenDART API 클라이언트
-│  └─ main.py            # 메인 파이프라인
+├─ backend/
+│  ├─ src/
+│  │  ├─ core/
+│  │  │  └─ config.py          # 환경 변수 및 설정 관리
+│  │  ├─ data/
+│  │  │  ├─ dart_api.py        # OpenDART API 클라이언트
+│  │  │  └─ batch/             # batch export 보조 스크립트
+│  │  └─ main.py               # 메인 파이프라인
 ├─ data/
 │  ├─ raw/               # API 응답 원본 데이터 (JSON)
 │  └─ processed/         # 처리된 데이터 (향후)

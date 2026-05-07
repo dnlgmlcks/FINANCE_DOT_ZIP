@@ -225,6 +225,61 @@ class DartAPIClient:
         except Exception as e:
             print(f"API 호출 실패: {e}")
             return None
+
+    def fetch_single_company_all_accounts(
+        self,
+        corp_code: str,
+        bsns_year: int,
+        reprt_code: str = "11011",
+        fs_div: str = "CFS"
+    ) -> Optional[Dict[str, Any]]:
+        """
+        단일회사 전체 재무제표 API(fnlttSinglAcntAll.json)를 호출합니다.
+
+        기존 주요계정 API(fnlttSinglAcnt.json)는 대표 계정만 반환하므로,
+        재고자산, 매출채권, 차입금, 현금흐름 등 추가 분석 계정 후보를
+        찾기 위해 전체 재무제표 API를 별도 함수로 분리했습니다.
+
+        Args:
+            corp_code: DART 고유 회사 코드입니다.
+            bsns_year: 사업연도입니다.
+            reprt_code: 보고서 코드입니다. 11011은 사업보고서입니다.
+            fs_div: 재무제표 구분입니다. CFS는 연결재무제표입니다.
+
+        Returns:
+            OpenDART API 응답 JSON입니다. 정상 응답이 아니면 None을 반환합니다.
+        """
+        try:
+            print(
+                "전체 재무제표 조회: "
+                f"corp_code={corp_code}, year={bsns_year}, "
+                f"reprt_code={reprt_code}, fs_div={fs_div}"
+            )
+            url = f"{self.base_url}/fnlttSinglAcntAll.json"
+            params = {
+                "crtfc_key": self.api_key,
+                "corp_code": corp_code,
+                "bsns_year": bsns_year,
+                "reprt_code": reprt_code,
+                "fs_div": fs_div
+            }
+
+            response = self.session.get(url, params=params, timeout=20)
+            response.raise_for_status()
+
+            data = response.json()
+
+            if data.get("status") == "000":
+                print(f"전체 재무제표 조회 성공: {len(data.get('list', []))}개 계정 수신")
+                return data
+
+            error_msg = data.get("message", "알 수 없는 오류")
+            print(f"전체 재무제표 API 오류: {error_msg}")
+            return None
+
+        except Exception as e:
+            print(f"전체 재무제표 API 호출 실패: {e}")
+            return None
     
     def save_response_to_file(self, data: Dict[str, Any], filename: str) -> Path:
         """
