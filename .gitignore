@@ -71,3 +71,9 @@ node_modules/
 backend/src/data/raw/*.json
 backend/src/data/processed/*.json
 backend/src/data/interim/*.xml
+
+
+db.sqlite3
+*.pyc
+__pycache__/
+.env
