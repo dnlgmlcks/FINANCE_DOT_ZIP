@@ -20,7 +20,7 @@ function App() {
     const fetchInitialData = async () => {
       const options = {
         svcId: 'initData',
-        strUrl: '/api/initData/', // 전체 데이터를 주는 백엔드 주소
+        strUrl: '/api/initData', // 전체 데이터를 주는 백엔드 주소
         method: 'POST',
         pCall: (svcId, responseData, errCd, msgTp, msgCd, msgText) => {
           if (errCd === 0) {
@@ -43,7 +43,7 @@ function App() {
   // 조회 함수
   const handleSearch = async (keyword) => {
     
-    if(keyword === "" ){
+    if(keyword === "" || keyword === undefined ){
       alert('검색어를 입력해주세요.');
       return false;
     }
@@ -54,9 +54,9 @@ function App() {
     // 조회 API 옵션
     const options = {
       svcId: 'searchCompany',
-      strUrl: '/api/test/',//'/api/searchCompany',
+      strUrl: '/api/searchCompany',
       param: { keyword: keyword },
-      method: 'GET',
+      method: 'POST',
       inDs: {},
       pCall: (svcId, responseData, errCd, msgTp, msgCd, msgText) => {
         if (errCd === 0) {
