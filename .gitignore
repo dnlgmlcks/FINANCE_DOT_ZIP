@@ -50,6 +50,11 @@ data/processed/
 *.csv
 *.zip
 
+# Team batch export CSV templates
+!data/export/
+!data/export/**/
+!data/export/**/*.csv
+
 # 캐시
 .pytest_cache/
 .coverage
