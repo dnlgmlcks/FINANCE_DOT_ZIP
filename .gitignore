@@ -72,8 +72,14 @@ backend/src/data/raw/*.json
 backend/src/data/processed/*.json
 backend/src/data/interim/*.xml
 
-
+# Django
 db.sqlite3
-*.pyc
+
+# Python cache
 __pycache__/
+*.py[cod]
+
+# Env
 .env
+.env.local
+.env.*.local
