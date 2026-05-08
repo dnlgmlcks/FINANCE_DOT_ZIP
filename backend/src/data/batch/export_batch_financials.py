@@ -12,12 +12,14 @@ from __future__ import annotations
 import argparse
 import csv
 import os
+import re
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import requests
 from dotenv import load_dotenv
 
 
@@ -27,7 +29,6 @@ if str(BACKEND_SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_SRC_ROOT))
 
 from data.batch.create_batch_templates import CSV_HEADERS, EXPORT_ROOT  # noqa: E402
-from data.dart_api import DartAPIClient  # noqa: E402
 from data.process_single_all_accounts import build_signal_account_availability  # noqa: E402
 from services.financial_processor import (  # noqa: E402
     build_single_all_account_availability,
@@ -38,6 +39,7 @@ from services.financial_processor import (  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env")
 load_dotenv(PROJECT_ROOT / "backend" / ".env")
 DART_API_KEY = os.getenv("DART_API_KEY", "")
+DART_API_BASE = "https://opendart.fss.or.kr/api"
 SOURCE_API = "fnlttSinglAcntAll.json"
 
 
@@ -79,6 +81,48 @@ def append_csv_rows(path: Path, fieldnames: list[str], rows: list[dict[str, Any]
     write_csv_rows(path, fieldnames, existing_rows)
 
 
+def row_key(row: dict[str, Any], fields: list[str]) -> tuple[str, ...]:
+    """중복 방지에 사용할 key tuple을 만듭니다."""
+    return tuple(str(row.get(field, "")) for field in fields)
+
+
+def sanitize_error_message(message: str) -> str:
+    """오류 메시지에 API 키가 포함되지 않도록 인증 파라미터를 마스킹합니다."""
+    return re.sub(r"(crtfc_key=)[^&\s)]+", r"\1***", message or "")
+
+
+def merge_csv_rows(
+    path: Path,
+    fieldnames: list[str],
+    rows: list[dict[str, Any]],
+    key_fields: list[str],
+) -> None:
+    """key 기준으로 기존 행을 새 행으로 갱신해 중복 append를 방지합니다."""
+    merged: dict[tuple[str, ...], dict[str, Any]] = {}
+    ordered_keys: list[tuple[str, ...]] = []
+
+    for row in read_csv_rows(path):
+        key = row_key(row, key_fields)
+        merged[key] = row
+        ordered_keys.append(key)
+
+    for row in rows:
+        key = row_key(row, key_fields)
+        if key not in merged:
+            ordered_keys.append(key)
+        merged[key] = row
+
+    unique_ordered_keys = []
+    seen = set()
+    for key in ordered_keys:
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_ordered_keys.append(key)
+
+    write_csv_rows(path, fieldnames, [merged[key] for key in unique_ordered_keys])
+
+
 def load_companies(batch_id: str, limit: int | None) -> list[dict[str, str]]:
     """batch companies.csv에서 처리 대상 회사를 읽습니다."""
     companies_path = EXPORT_ROOT / batch_id / "companies.csv"
@@ -102,6 +146,27 @@ def load_success_keys(batch_id: str) -> set[tuple[str, str, str, str]]:
             row.get("fs_div", ""),
         ))
     return keys
+
+
+def fetch_single_company_all_accounts(
+    corp_code: str,
+    bsns_year: int,
+    reprt_code: str,
+    fs_div: str,
+    timeout: int = 20,
+) -> dict[str, Any]:
+    """OpenDART 전체 재무제표 API 응답을 성공/실패와 관계없이 반환합니다."""
+    url = f"{DART_API_BASE}/{SOURCE_API}"
+    params = {
+        "crtfc_key": DART_API_KEY,
+        "corp_code": corp_code,
+        "bsns_year": bsns_year,
+        "reprt_code": reprt_code,
+        "fs_div": fs_div,
+    }
+    response = requests.get(url, params=params, timeout=timeout)
+    response.raise_for_status()
+    return response.json()
 
 
 def build_raw_rows(
@@ -150,6 +215,7 @@ def build_standard_rows(
     company: dict[str, str],
     raw_data: dict[str, Any],
     collected_at: str,
+    default_fs_div: str,
 ) -> list[dict[str, Any]]:
     """표준 계정 매핑 결과를 financial_accounts_standard.csv 형식으로 변환합니다."""
     rows: list[dict[str, Any]] = []
@@ -161,7 +227,7 @@ def build_standard_rows(
             "corp_name": company.get("corp_name", ""),
             "bsns_year": row.get("year", ""),
             "reprt_code": row.get("reprt_code", ""),
-            "fs_div": row.get("fs_div", ""),
+            "fs_div": row.get("fs_div") or default_fs_div,
             "sj_div": row.get("sj_div", ""),
             "standard_account": row.get("standard_account", ""),
             "account_nm": row.get("account_nm", ""),
@@ -262,13 +328,13 @@ def build_log_row(
 def classify_api_failure(response: dict[str, Any] | None) -> tuple[str, str, str]:
     """OpenDART 응답 실패를 collection_log 상태로 분류합니다."""
     if not response:
-        return "failed", "", "empty response"
+        return "failed", "exception", "empty response"
 
     status_code = str(response.get("status", "")).strip()
     message = str(response.get("message", "")).strip()
-    if status_code in {"013", "014"}:
+    if status_code in {"013", "014"} or "조회된 데이타가 없습니다" in message or "조회된 데이터가 없습니다" in message:
         return "no_data", status_code, message
-    if status_code in {"020", "800"}:
+    if status_code in {"020", "800"} or "요청 제한" in message or "rate" in message.lower():
         return "rate_limited", status_code, message
     return "failed", status_code, message
 
@@ -289,7 +355,6 @@ def collect_batch_financials(
     batch_dir = EXPORT_ROOT / batch_id
     companies = load_companies(batch_id, limit)
     success_keys = load_success_keys(batch_id) if skip_existing else set()
-    client = DartAPIClient(DART_API_KEY)
 
     raw_rows: list[dict[str, Any]] = []
     standard_rows: list[dict[str, Any]] = []
@@ -321,12 +386,17 @@ def collect_batch_financials(
                 continue
 
             started_at = datetime.now().isoformat(timespec="seconds")
-            response = client.fetch_single_company_all_accounts(
-                corp_code=company.get("corp_code", ""),
-                bsns_year=year,
-                reprt_code=reprt_code,
-                fs_div=fs_div,
-            )
+            response: dict[str, Any] | None = None
+            exception_message = ""
+            try:
+                response = fetch_single_company_all_accounts(
+                    corp_code=company.get("corp_code", ""),
+                    bsns_year=year,
+                    reprt_code=reprt_code,
+                    fs_div=fs_div,
+                )
+            except requests.RequestException as exc:
+                exception_message = sanitize_error_message(str(exc))
             finished_at = datetime.now().isoformat(timespec="seconds")
             collected_at = finished_at
 
@@ -342,7 +412,10 @@ def collect_batch_financials(
                     log_rows.append(build_log_row(batch_id, company, year, reprt_code, fs_div, "no_data", started_at, finished_at))
                     counters["no_data"] += 1
             else:
-                status, error_code, error_message = classify_api_failure(response)
+                if exception_message:
+                    status, error_code, error_message = "failed", "exception", exception_message
+                else:
+                    status, error_code, error_message = classify_api_failure(response)
                 log_rows.append(
                     build_log_row(
                         batch_id,
@@ -371,7 +444,13 @@ def collect_batch_financials(
                 time.sleep(sleep_interval)
 
         if company_raw_data["data"]:
-            standard_rows.extend(build_standard_rows(batch_id, company, company_raw_data, datetime.now().isoformat(timespec="seconds")))
+            standard_rows.extend(build_standard_rows(
+                batch_id,
+                company,
+                company_raw_data,
+                datetime.now().isoformat(timespec="seconds"),
+                default_fs_div=fs_div,
+            ))
             account_rows.extend(add_company_fields(
                 build_single_all_account_availability(company_raw_data),
                 batch_id,
@@ -383,12 +462,42 @@ def collect_batch_financials(
                 company,
             ))
 
-    append_csv_rows(batch_dir / "reports.csv", CSV_HEADERS["reports.csv"], report_rows)
-    append_csv_rows(batch_dir / "financial_accounts_raw.csv", CSV_HEADERS["financial_accounts_raw.csv"], raw_rows)
-    append_csv_rows(batch_dir / "financial_accounts_standard.csv", CSV_HEADERS["financial_accounts_standard.csv"], standard_rows)
-    append_csv_rows(batch_dir / "account_availability.csv", CSV_HEADERS["account_availability.csv"], account_rows)
-    append_csv_rows(batch_dir / "signal_account_availability.csv", CSV_HEADERS["signal_account_availability.csv"], signal_rows)
-    append_csv_rows(batch_dir / "collection_log.csv", CSV_HEADERS["collection_log.csv"], log_rows)
+    merge_csv_rows(
+        batch_dir / "reports.csv",
+        CSV_HEADERS["reports.csv"],
+        report_rows,
+        ["batch_id", "stock_code", "bsns_year", "reprt_code", "fs_div", "rcept_no"],
+    )
+    merge_csv_rows(
+        batch_dir / "financial_accounts_raw.csv",
+        CSV_HEADERS["financial_accounts_raw.csv"],
+        raw_rows,
+        ["batch_id", "stock_code", "bsns_year", "reprt_code", "fs_div", "sj_div", "account_id", "account_nm", "ord"],
+    )
+    merge_csv_rows(
+        batch_dir / "financial_accounts_standard.csv",
+        CSV_HEADERS["financial_accounts_standard.csv"],
+        standard_rows,
+        ["batch_id", "stock_code", "bsns_year", "reprt_code", "fs_div", "sj_div", "standard_account", "account_id", "account_nm"],
+    )
+    merge_csv_rows(
+        batch_dir / "account_availability.csv",
+        CSV_HEADERS["account_availability.csv"],
+        account_rows,
+        ["batch_id", "stock_code", "standard_account"],
+    )
+    merge_csv_rows(
+        batch_dir / "signal_account_availability.csv",
+        CSV_HEADERS["signal_account_availability.csv"],
+        signal_rows,
+        ["batch_id", "stock_code", "signal_name", "required_account"],
+    )
+    merge_csv_rows(
+        batch_dir / "collection_log.csv",
+        CSV_HEADERS["collection_log.csv"],
+        log_rows,
+        ["batch_id", "stock_code", "bsns_year", "reprt_code", "fs_div"],
+    )
     update_batch_summary(batch_dir / "batch_summary.md", batch_id, counters, years, reprt_code, fs_div)
 
     print("[done] batch export finished", flush=True)
@@ -416,6 +525,7 @@ def update_batch_summary(
         f"- no_data: {counters.get('no_data', 0)}",
         f"- rate_limited: {counters.get('rate_limited', 0)}",
         f"- skipped: {counters.get('skipped', 0)}",
+        "- skipped 정책: collection_log.csv에는 회사/연도별 최신 최종 상태만 보존하고, 이미 성공한 건의 skip은 이번 실행 summary에만 표시합니다.",
         "",
         "## PR 체크리스트",
         "- [ ] 내 batch 폴더만 수정했습니다.",

@@ -1,1 +1,286 @@
-batch_id,corp_code,stock_code,corp_name,bsns_year,reprt_code,fs_div,sj_div,standard_account,account_nm,account_id,amount,currency,mapping_status,is_proxy,proxy_reason,rcept_no,collected_at
+﻿batch_id,corp_code,stock_code,corp_name,bsns_year,reprt_code,fs_div,sj_div,standard_account,account_nm,account_id,amount,currency,mapping_status,is_proxy,proxy_reason,rcept_no,collected_at
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,723505491,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1679883074,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,4176037169,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,9846087430,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,5135868069,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,1257000000,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,79140000,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,5773900274,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,4072187156,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,22909827614,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,236449313,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,87804479,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2019,11011,CFS,SCE,당기순이익,당기순손실,-표준계정코드 미사용-,0,KRW,exact,false,,20200330002333,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,273816165,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1546525528,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,3441351954,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,8445845201,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,4625513999,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,3084956000,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,326620000,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,5590177515,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,2855667686,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,12278775877,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,-45119507,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2020,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-965460561,KRW,exact,false,,20210322001120,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,79410630,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1629724491,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,2933198149,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,6459955256,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,5528126338,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,3069000000,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,185730000,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,5806902924,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,653052332,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,10335646325,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,129629447,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01063556,233990,(주)질경이,2021,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,69051413,KRW,exact,false,,20220321000910,2026-05-08T16:25:07
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,73160404,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,매출채권,매출채권,dart_ShortTermTradeReceivable,1090475649,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,778899482,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,794809239,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,3727042937,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,6663811597,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,3055000000,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,15685941884,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,-11958898947,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,CIS,매출액,수익(매출액),ifrs-full_Revenue,2507840033,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,906084377,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-2990094308,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01023822,236340,(주)메디젠휴먼케어,2020,11011,CFS,CF,이자비용,이자비용,dart_AdjustmentsForInterestExpenses,189028012,KRW,exact,false,,20210812000386,2026-05-08T16:25:24
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,5705883002,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1818322019,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,22572693329,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,33129425220,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,13786704553,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,3800000000,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,10245320000,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,24448391821,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,8681033399,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,26847557648,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,565566086,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,CF,영업활동현금흐름,영업활동으로 인한 현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,3275504514,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2020,11011,CFS,CF,이자비용,이자비용,dart_AdjustmentsForInterestExpenses,-564523836,KRW,exact,false,,20210526000223,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,3882869423,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1991580159,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,25553942243,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,35397234803,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,12295966561,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,4000000000,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,12408970000,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,24863149082,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,10534085721,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,14887214164,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,588683766,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,CF,영업활동현금흐름,영업활동으로 인한 현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-715495561,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2021,11011,CFS,CF,이자비용,이자비용,dart_AdjustmentsForInterestExpenses,-419731530,KRW,exact,false,,20220323000529,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2504925431,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1624803268,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,25365784171,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,32922956643,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,16415732034,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,7758000000,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,10606920000,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,27045428909,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,5877527734,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,17600848507,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,768492737,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,01158632,250030,주식회사 진코스텍,2022,11011,CFS,CF,영업활동현금흐름,영업활동으로 인한 현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-3178559552,KRW,exact,false,,20230323000929,2026-05-08T16:25:53
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,4554338410,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4508789532,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,17856167010,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,35194641243,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,16920053110,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,4050000000,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,8572370000,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,29863311646,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,5331329597,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,CIS,매출액,수익(매출액),ifrs-full_Revenue,47956927576,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,904371913,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2020,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,992228862,KRW,exact,false,,20210318000980,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,1503708670,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,5288693298,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,16997150683,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,31414458455,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,15321334586,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,4050000000,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,6445130000,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,25514245160,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,5900213295,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,45364798105,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,CIS,영업이익,영업이익,dart_OperatingIncomeLoss,242759459,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,887278239,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,CIS,당기순이익,당기순이익,ifrs-full_ProfitLoss,347579529,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,20172610,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2021,11011,CFS,SCE,당기순이익,당기순이익,ifrs-full_ProfitLoss,347579529,KRW,exact,false,,20220323000687,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,7812780927,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4043567406,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,18518240906,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,39390612610,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,16441365355,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,4050000000,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,4183270000,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,23289010512,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,16101602098,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,42348411765,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,964591891,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2022,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,1542124342,KRW,exact,false,,20230323000937,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,40069648026,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,8159865925,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4991426178,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,17988501336,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,18109294349,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,17980331092,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_Borrowings,4050000000,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,단기차입금,유동성장기차입금,ifrs-full_ShorttermBorrowings,4229510000,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,21960353677,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,1473680000,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,751835031,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,52740481732,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,2509252715,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00425254,257990,(주)나우코스,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,2941946000,KRW,exact,false,,20240321001203,2026-05-08T16:26:17
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,7790204392,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,7002547,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,7148426869,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,-11155421467,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,17152045457,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,13549600000,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,18945625859,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,1456728384,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,837151079,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-726433131,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,00990396,266170,(주)레드우즈,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,1109442406,KRW,exact,false,,20240328001858,2026-05-08T16:26:35
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,13212292578,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,161196438,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,매출채권,매출채권,ifrs-full_TradeAndOtherCurrentReceivables,4231914751,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,162244228,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,127743344,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,12549338166,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,13084549234,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,627666793,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,CF,영업활동현금흐름,영업활동으로 인한 현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,515943198,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01208821,266350,(주)팡스카이,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,21698866349,KRW,exact,false,,20240318000329,2026-05-08T16:26:41
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,42885054571,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,1989575183,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,재고자산,유동재고자산,ifrs-full_Inventories,3930544494,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,32104793855,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,18490674516,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,11464123035,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,단기차입금,유동 차입금,ifrs-full_ShorttermBorrowings,8980290000,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,24394380055,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,11639810000,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,1131696561,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,CIS,매출액,수익(매출액),ifrs-full_Revenue,12399818269,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-7106465066,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01575361,267080,세븐브로이맥주 주식회사,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,18490674516,KRW,exact,false,,20240321001838,2026-05-08T16:26:52
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2850875574,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4062627278,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,11613936727,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,36415742194,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,14969500902,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,5256371758,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,9164677440,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,24896818810,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,11518923384,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,CIS,매출액,매출,ifrs-full_Revenue,29162085873,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,565413168,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2020,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-1687990545,KRW,exact,false,,20210323000370,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2403218807,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,7132265265,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,9713869766,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,33642446962,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,11642075586,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,7455630934,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,7729078849,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,20211754364,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,13430692598,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,CIS,매출액,매출,ifrs-full_Revenue,26027109143,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,574466751,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2021,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-2217310957,KRW,exact,false,,20220322001083,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2831279030,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,3328002493,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,9761035299,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,33736281175,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,13896118908,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,8877946362,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,6044146512,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,20654122391,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,13082158784,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,CIS,매출액,매출,ifrs-full_Revenue,24281641358,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,622263874,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2022,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,2864050206,KRW,exact,false,,20230321000721,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,49713297731,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,1956777339,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,재고자산,유동재고자산,ifrs-full_Inventories,1885978086,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,8576667966,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,30330962868,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,11512840758,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,단기차입금,유동 차입금,ifrs-full_ShorttermBorrowings,6316991655,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,19382334863,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,7218686274,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,1055172609,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,CIS,매출액,매출,ifrs-full_Revenue,24346097310,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,447480751,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01117246,278990,(주)이엠비,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,1696733212,KRW,exact,false,,20240321000353,2026-05-08T16:27:10
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2700627631,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1349416742,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,3123028817,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,26803668643,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,7523172150,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,1057333316,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,9550119301,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,17253549342,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,CIS,매출액,수익(매출액),ifrs-full_Revenue,8415717764,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,193096782,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2021,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,468168135,KRW,exact,false,,20221205000209,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,835158683,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,1309870533,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,2507408869,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,26915427474,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,7081141681,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,2753333320,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,10782957741,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,16132469733,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,CIS,매출액,수익(매출액),ifrs-full_Revenue,7278033368,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,421315848,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01290132,311960,주식회사 인터로이드,2022,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-1013911498,KRW,exact,false,,20230323001005,2026-05-08T16:27:57
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,67400341,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,매출채권,매출채권,dart_ShortTermTradeReceivable,4030286717,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4469069918,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,10442269418,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,26277494521,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,5264728627,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,1159732372,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,7587500000,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,14383601610,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,11893892911,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,16324671805,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,417249453,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2022,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-1697136931,KRW,exact,false,,20230321001063,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,23055248358,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,매출채권,매출채권,dart_ShortTermTradeReceivable,2583155888,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,484415301,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,재고자산,재고자산,ifrs-full_Inventories,4097808396,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,11072772109,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,7207046252,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,8471822873,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_Borrowings,550000000,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,15848202106,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,BS,장기차입금,장기차입금,dart_LongTermBorrowingsGross,6190290000,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,CIS,금융비용,금융원가,ifrs-full_FinanceCosts,767278309,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,CIS,매출액,매출액,ifrs-full_Revenue,19488557236,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-1154622977,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01328170,317860,주식회사 노드메이슨,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,15489133017,KRW,exact,false,,20240320001631,2026-05-08T16:28:04
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,자산총계,자산총계,ifrs-full_Assets,6445517017,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,현금및현금성자산,현금및현금성자산,ifrs-full_CashAndCashEquivalents,2897850272,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,유형자산,유형자산,ifrs-full_PropertyPlantAndEquipment,130781155,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,자본총계,자본총계,ifrs-full_Equity,1905558949,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,유동부채,유동부채,ifrs-full_CurrentLiabilities,3829455969,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,단기차입금,단기차입금,ifrs-full_ShorttermBorrowings,3000000000,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,BS,부채총계,부채총계,ifrs-full_Liabilities,4539958068,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,CIS,금융비용,금융비용,ifrs-full_FinanceCosts,156989509,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,CIS,당기순이익,당기순손실,ifrs-full_ProfitLoss,-6060510832,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,CF,영업활동현금흐름,영업활동현금흐름,ifrs-full_CashFlowsFromUsedInOperatingActivities,-4500450716,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,SCE,자본총계,자본총계,ifrs-full_Equity,5266602500,KRW,exact,false,,20240321001801,2026-05-08T16:29:07
+konex_001,01185867,341170,퓨쳐메디신 주식회사,2023,11011,CFS,SCE,당기순이익,당기순손실,ifrs-full_ProfitLoss,-6060510832,KRW,exact,false,,20240321001801,2026-05-08T16:29:07

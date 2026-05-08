@@ -1,44 +1,18 @@
 # Batch Summary: kosdaq_001
 
-## batch_id
-- kosdaq_001
-
-## 담당자
--
-
-## 시장
-- KOSDAQ
-
-## 배치 범위
-- 1~500
-
-## 실행 명령
--
-
-## 수집 기준
-- 사업연도:
-- 보고서 코드:
-- 재무제표 구분:
-- 사용 API:
-
-## 완료 여부
-- [ ] 완료
-
-## 성공 건수
-- 0
-
-## 실패 건수
-- 0
-
-## no_data 건수
-- 0
-
-## 특이사항
--
+## 실행 결과
+- years: 2019-2023
+- reprt_code: 11011
+- fs_div: CFS
+- success: 0
+- failed: 0
+- no_data: 681
+- rate_limited: 0
+- skipped: 1819
+- skipped 정책: collection_log.csv에는 회사/연도별 최신 최종 상태만 보존하고, 이미 성공한 건의 skip은 이번 실행 summary에만 표시합니다.
 
 ## PR 체크리스트
 - [ ] 내 batch 폴더만 수정했습니다.
 - [ ] CSV 헤더를 변경하지 않았습니다.
 - [ ] collection_log.csv에 실패/스킵 사유를 기록했습니다.
-- [ ] raw JSON 업로드 여부를 팀 규칙에 맞게 확인했습니다.
 - [ ] API 키 또는 .env 값을 커밋하지 않았습니다.
