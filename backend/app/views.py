@@ -70,15 +70,15 @@ def search_company(request):
             data=[]
         )
 
-    result = search_companies(keyword)
+    # result = search_companies(keyword)
 
-    return success_response(
-        data={
-            "count": len(result),
-            "companies": result
-        },
-        message="기업 검색 성공"
-    )
+    # return success_response(
+    #     data={
+    #         "count": len(result),
+    #         "companies": result
+    #     },
+    #     message="기업 검색 성공"
+    # )
 
 
 @api_view(["GET"])
