@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import SearchBox from './components/SearchBox';
 import MainLayout from './layouts/MainLayout';
-import NewsAnalysis from './pages/NewsAnalysis';
 import Report from './pages/Report';
+import NewsAnalysis from './pages/NewsAnalysis';
 import Disclosure from './pages/Disclosure';
 import { BeatLoader } from 'react-spinners';
 import { gfn_transaction } from './util/common-util';
@@ -17,10 +17,11 @@ const PAGE_MAP = {
 };
 
 function App() {
-  const [activeTab, setActiveTab]       = useState('news');
-  const [loading, setLoading]           = useState(false);
-  const [allCompanies, setAllCompanies] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [activeTab, setActiveTab]           = useState('report');
+  const [loading, setLoading]               = useState(false);
+  const [allCompanies, setAllCompanies]     = useState([]);
+  const [filteredData, setFilteredData]     = useState([]);
+  const [searchCollapsed, setSearchCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -67,9 +68,9 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <Header />
-      <div className="app-search-bar">
+    <>
+      <Header onToggleSearch={() => setSearchCollapsed(v => !v)} searchCollapsed={searchCollapsed} />
+      <div className={`app-search-bar${searchCollapsed ? ' collapsed' : ''}`}>
         <SearchBox
           onSearch={handleSearch}
           onKeyIn={handleKeyIn}
@@ -77,16 +78,14 @@ function App() {
         />
       </div>
       {loading && (
-        <div className="loading-overlay">
+        <div className="app-loader">
           <BeatLoader color="#c084fc" size={10} />
         </div>
       )}
-      <div className={`content-wrapper ${loading ? 'is-loading' : ''}`}>
-        <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
-          {PAGE_MAP[activeTab]}
-        </MainLayout>
-      </div>
-    </div>
+      <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+        {PAGE_MAP[activeTab]}
+      </MainLayout>
+    </>
   );
 }
 
