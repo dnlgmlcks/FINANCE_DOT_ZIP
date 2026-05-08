@@ -124,4 +124,10 @@
   border-left: none;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
+
+.ml-chat::-webkit-scrollbar { width: 4px; }
+.ml-chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }

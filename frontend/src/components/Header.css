@@ -35,6 +35,13 @@
   gap: 4px;
 }
 
+.hd-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
 .hd-icon-btn {
   width: 34px;
   height: 34px;
