@@ -18,6 +18,34 @@
 
 팀원별 담당 batch_id는 PR 또는 이슈에서 명시합니다. 한 사람이 여러 batch를 맡을 수 있지만, 한 PR에서는 가능한 한 하나의 batch만 변경하는 방식을 권장합니다.
 
+## 회사 목록 준비 방식
+
+상장 후보 기업 목록은 OpenDART `corpCode.xml`에서 `stock_code`가 있는 회사를 추출해 만듭니다. `corpCode.xml`은 `corp_code`, `stock_code`, `corp_name` 매핑을 얻기 위한 기준 자료이며, 이 파일만으로는 KOSPI, KOSDAQ, KONEX 시장 구분을 정확히 확정하지 않습니다.
+
+시장 구분과 기업개황 보강은 OpenDART `company.json` 응답을 사용합니다. `company.json`의 `corp_cls` 값은 OpenDART 기준 시장 구분으로 사용합니다.
+
+| corp_cls | market | 설명 |
+| --- | --- | --- |
+| Y | KOSPI | 유가증권 |
+| K | KOSDAQ | 코스닥 |
+| N | KONEX | 코넥스 |
+| E | OTHER | 기타 |
+
+`company.json`은 `corp_cls` 외에도 `induty_code`, `acc_mt`, `stock_name` 같은 기업개황 정보를 보강하는 데 사용합니다. KRX 별도 상장사 목록은 필수 입력이 아니며, 필요할 때 OpenDART 기준 결과를 교차검증하는 보조 자료로만 사용할 수 있습니다.
+
+회사 master와 batch별 `companies.csv`는 아래 스크립트로 준비합니다. `company.json` 호출은 API 요청 수를 사용하므로 처음에는 반드시 작은 `--limit` 값으로 테스트합니다. `--limit`을 생략하거나 `--limit 0` 또는 `--no-limit`을 사용하면 전체 후보를 처리합니다.
+
+```bash
+# 테스트 실행
+python backend/src/data/batch/prepare_company_batches.py --limit 20 --batch-size 500
+
+# 전체 실행
+python backend/src/data/batch/prepare_company_batches.py --batch-size 500 --force-refresh --sleep-interval 1.0
+
+# 전체 실행을 명시적으로 표현
+python backend/src/data/batch/prepare_company_batches.py --batch-size 500 --force-refresh --sleep-interval 1.0 --no-limit
+```
+
 ## 작업 규칙
 
 - 각 팀원은 자기 batch 폴더만 수정합니다.

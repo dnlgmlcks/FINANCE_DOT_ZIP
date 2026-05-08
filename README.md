@@ -87,6 +87,21 @@ python backend/src/main.py
 python backend/src/main.py --refresh-corp-code
 ```
 
+### 4. 상장사 batch 회사 목록 준비
+
+`corpCode.xml`로 상장 후보를 찾고, `company.json`의 `corp_cls`로 KOSPI/KOSDAQ/KONEX/OTHER 시장 구분을 보강합니다. `--limit`을 생략하거나 `--limit 0` 또는 `--no-limit`을 사용하면 전체 후보를 처리합니다.
+
+```bash
+# 테스트 실행
+python backend/src/data/batch/prepare_company_batches.py --limit 20 --batch-size 500
+
+# 전체 실행
+python backend/src/data/batch/prepare_company_batches.py --batch-size 500 --force-refresh --sleep-interval 1.0
+
+# 전체 실행을 명시적으로 표현
+python backend/src/data/batch/prepare_company_batches.py --batch-size 500 --force-refresh --sleep-interval 1.0 --no-limit
+```
+
 ## 프로젝트 구조
 
 ```
@@ -101,6 +116,8 @@ FINANCE_DOT_ZIP/
 │  │  └─ main.py               # 메인 파이프라인
 ├─ data/
 │  ├─ raw/               # API 응답 원본 데이터 (JSON)
+│  ├─ company_master/    # OpenDART company.json 기준 상장사 master 생성 위치
+│  ├─ export/            # 팀 batch별 CSV export 템플릿
 │  └─ processed/         # 처리된 데이터 (향후)
 ├─ tests/                # 단위 테스트 (향후)
 ├─ .gitignore
