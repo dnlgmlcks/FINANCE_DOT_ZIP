@@ -67,7 +67,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="container">
       <Header />
       <div className="app-search-bar">
         <SearchBox
@@ -77,14 +77,16 @@ function App() {
         />
       </div>
       {loading && (
-        <div className="app-loader">
+        <div className="loading-overlay">
           <BeatLoader color="#c084fc" size={10} />
         </div>
       )}
-      <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
-        {PAGE_MAP[activeTab]}
-      </MainLayout>
-    </>
+      <div className={`content-wrapper ${loading ? 'is-loading' : ''}`}>
+        <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+          {PAGE_MAP[activeTab]}
+        </MainLayout>
+      </div>
+    </div>
   );
 }
 
