@@ -28,7 +28,16 @@ function SettingsIcon() {
   );
 }
 
-export default function Header() {
+function ChevronIcon({ collapsed }) {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      style={{ transition: 'transform 0.25s ease', transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+export default function Header({ onToggleSearch, searchCollapsed }) {
   return (
     <header className="hd-header">
       <div className="hd-logo">
@@ -38,6 +47,14 @@ export default function Header() {
       <div className="hd-actions">
         <button className="hd-icon-btn" title="알림"><BellIcon /></button>
         <button className="hd-icon-btn" title="설정"><SettingsIcon /></button>
+        <div className="hd-divider" />
+        <button
+          className="hd-icon-btn"
+          title={searchCollapsed ? '검색창 펼치기' : '검색창 접기'}
+          onClick={onToggleSearch}
+        >
+          <ChevronIcon collapsed={searchCollapsed} />
+        </button>
       </div>
     </header>
   );
