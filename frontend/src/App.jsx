@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import SearchBox from './components/SearchBox';
 import MainLayout from './layouts/MainLayout';
-import NewsAnalysis from './pages/NewsAnalysis';
 import Report from './pages/Report';
+import NewsAnalysis from './pages/NewsAnalysis';
 import Disclosure from './pages/Disclosure';
 import { BeatLoader } from 'react-spinners';
 import { gfn_transaction } from './util/common-util';
@@ -17,7 +17,7 @@ const PAGE_MAP = {
 };
 
 function App() {
-  const [activeTab, setActiveTab]           = useState('news');
+  const [activeTab, setActiveTab]           = useState('report');
   const [loading, setLoading]               = useState(false);
   const [allCompanies, setAllCompanies]     = useState([]);
   const [filteredData, setFilteredData]     = useState([]);
