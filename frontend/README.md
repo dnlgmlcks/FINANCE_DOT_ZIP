@@ -65,5 +65,3 @@ npm install
 ```
 npm run dev
 ```
-
-실행 후 터미널에 뜨는 http://localhost:5173 주소로 접속하세요.
