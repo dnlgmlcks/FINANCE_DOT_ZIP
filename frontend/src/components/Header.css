@@ -1,0 +1,55 @@
+/* ── Header.css ── */
+
+.hd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.hd-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hd-logo-icon {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.hd-logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+  letter-spacing: -0.02em;
+}
+
+.hd-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hd-icon-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hd-icon-btn:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
