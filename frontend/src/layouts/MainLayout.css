@@ -60,11 +60,68 @@
 .ml-content::-webkit-scrollbar { width: 4px; }
 .ml-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+/* 리사이저 */
+.ml-resizer {
+  width: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+}
+
+.ml-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.ml-resizer:hover::before,
+.ml-resizer:active::before {
+  background: var(--accent);
+  width: 2px;
+}
+
+.ml-resizer-handle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  background: var(--bg, #1a1a1a);
+  border: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.ml-resizer:hover .ml-resizer-handle {
+  opacity: 1;
+}
+
+.ml-resizer-handle span {
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text);
+  opacity: 0.5;
+}
+
 /* 우측 채팅 패널 */
 .ml-chat {
-  width: 340px;
   flex-shrink: 0;
-  border-left: 1px solid var(--border);
+  border-left: none;
   display: flex;
   flex-direction: column;
 }
