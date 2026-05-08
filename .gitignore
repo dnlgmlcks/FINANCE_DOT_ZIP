@@ -55,6 +55,11 @@ data/processed/
 !data/export/**/
 !data/export/**/*.csv
 
+# Company master artifacts for batch assignment
+!data/company_master/
+!data/company_master/listed_companies_master.csv
+!data/company_master/company_batch_summary.md
+
 # 캐시
 .pytest_cache/
 .coverage
