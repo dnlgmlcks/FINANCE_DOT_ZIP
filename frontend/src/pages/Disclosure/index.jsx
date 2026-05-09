@@ -1,10 +1,24 @@
-/* TODO: 공시 분석 페이지 구현 예정 */
-export default function Disclosure() {
+import { useState } from 'react';
+import Disclosure from './components/CompDisclosure';
+import './Disclosure.css';
+
+export default function DisclosurePage({ disclosureData }) {
+
   return (
-    <div style={{ padding: '40px 0', textAlign: 'center', color: 'var(--text)' }}>
-      <p style={{ fontSize: 40, marginBottom: 12 }}>📋</p>
-      <p style={{ fontSize: 15, color: 'var(--text-h)', marginBottom: 6 }}>공시 분석 페이지</p>
-      <p style={{ fontSize: 13 }}>전처리 공시 기반 변동 분석 · Warning Signal 구현 예정</p>
+    <div>
+      {/* 페이지 헤더 */}
+      <div className="na-page-header">
+        <div className="na-title-group">
+          <h2 className="na-page-title">변동 사유 분석</h2>
+          <span className="na-badge">LLM 베타</span>
+        </div>
+      </div>
+
+      <div className="report-wrap">
+        <div className="report-bottom">
+          <Disclosure reportData={disclosureData} />
+        </div>
+      </div>
     </div>
   );
 }
