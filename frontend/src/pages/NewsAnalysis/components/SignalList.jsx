@@ -18,6 +18,7 @@ const SIGNAL_COLOR = {
   neutral:  { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' },
 };
 
+
 export default function SignalList() {
   return (
     <div className="na-section-row">
