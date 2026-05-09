@@ -2,7 +2,9 @@
 backend/sample_report_data.py에 기록된 샘플 입력/출력 데이터 정의 양식대로 
 */
 
-const SAMPLE_NORMAL_AI_INPUT = {
+
+
+export const SAMPLE_NORMAL_AI_INPUT = {
     "company_info": {
         "stock_code": "005930",
         "company_name": "삼성전자",
@@ -95,7 +97,7 @@ const SAMPLE_NORMAL_AI_INPUT = {
 }
 
 
-const SAMPLE_WARNING_AI_INPUT = {
+ export const SAMPLE_WARNING_AI_INPUT = {
     "company_info": {
         "stock_code": "000000",
         "company_name": "테스트기업",
@@ -281,3 +283,27 @@ const SAMPLE_WARNING_AI_INPUT = {
         },
     ],
 }
+
+export const MOCK = {
+  title: '삼성전자 주식회사',
+  sections: [
+    {
+      id: 'I',
+      title: '공시의 의미 및 요약',
+      items: [
+        '삼성전자는 2024년 3분기 분기보고서를 통해 영업이익이 전년 동기 대비 감소하였음을 공시하였습니다.',
+        '반도체 부문(DS)에서의 실적 악화가 주요 원인으로 분석되며, 메모리 가격 하락과 수요 둔화가 복합적으로 작용하였습니다.',
+        '스마트폰(MX) 부문은 갤럭시 S24 시리즈의 견조한 판매로 선방하였으나, 전체 영업이익을 상쇄하기에는 역부족이었습니다.',
+      ],
+    },
+    {
+      id: 'II',
+      title: '사업의 내용 발췌',
+      items: [
+        '반도체 사업부는 HBM3E 개발 및 양산에 집중하며 AI 메모리 시장 공략을 강화하고 있습니다.',
+        '파운드리 사업은 2nm 공정 개발을 진행 중이며, 주요 고객사 확보를 위한 협상이 지속되고 있습니다.',
+        '가전·TV(VD/DA) 부문은 AI 탑재 제품군 확대로 프리미엄 시장 내 경쟁력을 유지하고 있습니다.',
+      ],
+    },
+  ],
+};

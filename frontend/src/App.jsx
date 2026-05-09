@@ -9,6 +9,7 @@ import { BeatLoader } from 'react-spinners';
 import { gfn_transaction } from './util/common-util';
 import './index.css';
 import './App.css';
+import {SAMPLE_NORMAL_AI_INPUT, MOCK} from './mock_data';
 
 const PAGE_MAP = {
   report:      <Report />,
@@ -58,6 +59,16 @@ function App() {
     }
   };
 
+  const renderPage = () => {
+    const commonProps = { reportData: SAMPLE_NORMAL_AI_INPUT , disclosureData: MOCK };
+
+    switch (activeTab) {
+      case 'report':     return <Report {...commonProps} />;
+      case 'news':       return <NewsAnalysis />;
+      case 'disclosure': return <Disclosure {...commonProps} />;
+    }
+  };
+
   const handleKeyIn = (keyword) => {
     if (!keyword) { setFilteredData([]); return; }
     setFilteredData(
@@ -83,7 +94,7 @@ function App() {
         </div>
       )}
       <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
-        {PAGE_MAP[activeTab]}
+        {renderPage()}
       </MainLayout>
     </>
   );
