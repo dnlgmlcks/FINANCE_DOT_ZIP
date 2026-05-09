@@ -3,7 +3,8 @@
 .acp-panel {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  flex: 1;
+  min-height: 0;
   background: #14161d;
   font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
   font-size: 13px;

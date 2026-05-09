@@ -6,3 +6,4 @@ pandas==2.1.1
 django
 djangorestframework
 django-cors-headers
+pymysql==1.1.3
