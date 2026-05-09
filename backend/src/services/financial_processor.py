@@ -10,35 +10,104 @@ from typing import Dict, List, Optional, Any, Tuple
 
 STANDARD_ACCOUNT_CANDIDATES: Dict[str, List[str]] = {
     # BS 기본 계정
-    "유동자산": ["유동자산"],
-    "비유동자산": ["비유동자산", "비유동자산"],
-    "자산총계": ["자산총계"],
-    "유동부채": ["유동부채"],
-    "비유동부채": ["비유동부채"],
-    "부채총계": ["부채총계"],
-    "자본총계": ["자본총계"],
+    "유동자산": [
+        "유동자산",
+        "CurrentAssets",
+        "ifrs-full_CurrentAssets"
+    ],
+    "비유동자산": [
+        "비유동자산",
+        "NoncurrentAssets",
+        "ifrs-full_NoncurrentAssets"
+    ],
+    "자산총계": [
+        "자산총계",
+        "Assets",
+        "ifrs-full_Assets"
+    ],
+    "유동부채": [
+        "유동부채",
+        "CurrentLiabilities",
+        "ifrs-full_CurrentLiabilities"
+    ],
+    "비유동부채": [
+        "비유동부채",
+        "NoncurrentLiabilities",
+        "ifrs-full_NoncurrentLiabilities"
+    ],
+    "부채총계": [
+        "부채총계",
+        "Liabilities",
+        "ifrs-full_Liabilities"
+    ],
+    "자본총계": [
+        "자본총계",
+        "Equity",
+        "ifrs-full_Equity"
+    ],
 
     # IS 기본 계정
-    "매출액": ["매출액", "매출", "수익(매출액)"],
-    "영업이익": ["영업이익"],
-    "법인세차감전순이익": ["법인세차감전순이익", "법인세비용차감전순이익(손실)"],
-    "당기순이익": ["당기순이익", "당기순손실"],
+    "매출액": [
+        "매출액",
+        "매출",
+        "수익(매출액)",
+        "영업수익",
+        "Revenue",
+        "ifrs-full_Revenue"
+    ],
+    "영업이익": [
+        "영업이익",
+        "영업이익(손실)",
+        "OperatingIncomeLoss",
+        "dart_OperatingIncomeLoss"
+    ],
+    "법인세차감전순이익": [
+        "법인세차감전순이익",
+        "법인세비용차감전순이익(손실)",
+        "ProfitLossBeforeTax",
+        "ifrs-full_ProfitLossBeforeTax"
+    ],
+    "당기순이익": [
+        "당기순이익",
+        "당기순손실",
+        "당기순이익(손실)",
+        "ProfitLoss",
+        "ifrs-full_ProfitLoss"
+    ],
 
     # 추가 확인 계정
     "현금및현금성자산": [
         "현금및현금성자산",
         "현금및현금성자산및단기금융상품",
         "현금및현금성자산과단기금융상품",
-        "CashAndCashEquivalents"
+        "CashAndCashEquivalents",
+        "ifrs-full_CashAndCashEquivalents"
     ],
-    "재고자산": ["재고자산", "Inventories", "Inventory"],
-    "매출채권": ["매출채권", "Receivables", "TradeReceivables"],
+    "재고자산": [
+        "재고자산",
+        "Inventories",
+        "Inventory",
+        "ifrs-full_Inventories"
+    ],
+    "매출채권": [
+        "매출채권",
+        "Receivables",
+        "TradeReceivables",
+        "CurrentTradeReceivables",
+        "ifrs-full_CurrentTradeReceivables"
+    ],
     "매출채권및기타채권": [
         "매출채권및기타채권",
         "매출채권 및 기타채권",
-        "TradeAndOtherReceivables"
+        "TradeAndOtherReceivables",
+        "ifrs-full_TradeAndOtherReceivables"
     ],
-    "미수금": ["미수금", "OtherReceivables"],
+    "미수금": [
+        "미수금",
+        "OtherReceivables",
+        "ShortTermOtherReceivables",
+        "dart_ShortTermOtherReceivables"
+    ],
     "매출채권/미수금": [
         "매출채권",
         "미수금",
@@ -46,26 +115,95 @@ STANDARD_ACCOUNT_CANDIDATES: Dict[str, List[str]] = {
         "매출채권/미수금",
         "매출채권 및 미수금"
     ],
-    "유형자산": ["유형자산", "PropertyPlantAndEquipment"],
-    "건설중인자산": ["건설중인자산", "ConstructionInProgress"],
-    "단기차입금": ["단기차입금", "ShortTermBorrowings"],
-    "매입채무": ["매입채무", "TradePayables"],
-    "사채": ["사채", "Debentures", "Bonds"],
-    "장기차입금": ["장기차입금", "LongTermBorrowings"],
-    "차입금": ["차입금", "Borrowings"],
-    "매출원가": ["매출원가", "제품매출원가", "상품매출원가", "CostOfSales", "CostOfGoodsSold"],
-    "원재료비": ["원재료비", "재료비", "원재료비및소모품비", "RawMaterials"],
-    "급여": ["급여", "인건비", "임금", "Salaries"],
-    "퇴직급여": ["퇴직급여", "RetirementBenefits"],
-    "복리후생비": ["복리후생비", "복리후생비용", "EmployeeBenefits"],
-    "이자비용": ["이자비용", "이자비용및수수료", "차입금이자비용", "InterestExpense"],
-    "금융비용": ["금융비용", "FinanceCosts"],
+    "유형자산": [
+        "유형자산",
+        "PropertyPlantAndEquipment",
+        "ifrs-full_PropertyPlantAndEquipment"
+    ],
+    "건설중인자산": [
+        "건설중인자산",
+        "ConstructionInProgress"
+    ],
+    "단기차입금": [
+        "단기차입금",
+        "ShortTermBorrowings",
+        "CurrentBorrowings",
+        "ifrs-full_CurrentBorrowings"
+    ],
+    "매입채무": [
+        "매입채무",
+        "TradePayables",
+        "TradeAndOtherCurrentPayablesToTradeSuppliers",
+        "ifrs-full_TradeAndOtherCurrentPayablesToTradeSuppliers"
+    ],
+    "사채": [
+        "사채",
+        "Debentures",
+        "Bonds",
+        "NoncurrentPortionOfNoncurrentBondsIssued",
+        "ifrs-full_NoncurrentPortionOfNoncurrentBondsIssued"
+    ],
+    "장기차입금": [
+        "장기차입금",
+        "LongTermBorrowings",
+        "NoncurrentPortionOfNoncurrentLoansReceived",
+        "ifrs-full_NoncurrentPortionOfNoncurrentLoansReceived"
+    ],
+    "차입금": [
+        "차입금",
+        "Borrowings"
+    ],
+    "매출원가": [
+        "매출원가",
+        "제품매출원가",
+        "상품매출원가",
+        "CostOfSales",
+        "CostOfGoodsSold",
+        "ifrs-full_CostOfSales"
+    ],
+    "원재료비": [
+        "원재료비",
+        "재료비",
+        "원재료비및소모품비",
+        "RawMaterials"
+    ],
+    "급여": [
+        "급여",
+        "인건비",
+        "임금",
+        "Salaries"
+    ],
+    "퇴직급여": [
+        "퇴직급여",
+        "RetirementBenefits"
+    ],
+    "복리후생비": [
+        "복리후생비",
+        "복리후생비용",
+        "EmployeeBenefits"
+    ],
+    "이자비용": [
+        "이자비용",
+        "이자비용및수수료",
+        "차입금이자비용",
+        "InterestExpense",
+        "InterestPaidClassifiedAsOperatingActivities",
+        "ifrs-full_InterestPaidClassifiedAsOperatingActivities"
+    ],
+    "금융비용": [
+        "금융비용",
+        "FinanceCosts",
+        "ifrs-full_FinanceCosts"
+    ],
     "영업활동현금흐름": [
         "영업활동현금흐름",
         "영업활동으로 인한 현금흐름",
         "영업에서 창출된 현금흐름",
         "CashFlowsFromUsedInOperatingActivities",
-        "NetCashProvidedByUsedInOperatingActivities"
+        "NetCashProvidedByUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations",
+        "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+        "ifrs-full_CashFlowsFromUsedInOperations"
     ]
 }
 
