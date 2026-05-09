@@ -1,24 +1,22 @@
 /* ===== Report Page Layout ===== */
-.report-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px;
-  background: var(--bg-primary, #0f1117);
-  min-height: 100%;
-  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+.na-card {
+  background: #1c2030;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
 }
 
 .report-top {
   display: grid;
   grid-template-columns: 240px 1fr;
-  gap: 12px;
+  /* gap: 12px; */
 }
 
 .report-left-col {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  /* gap: 12px; */
 }
 
 .report-right-col {

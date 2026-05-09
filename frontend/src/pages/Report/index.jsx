@@ -4,7 +4,7 @@ import RevenueChart from './components/RevenueChart';
 import FinancialTable from './components/FinancialTable';
 import './Report.css';
 
-export default function Report() {
+export default function Report({ reportData }) {
   return (
     <div>
       {/* 페이지 헤더 */}
@@ -13,10 +13,6 @@ export default function Report() {
           <h2 className="na-page-title">기업 분석 기본 정보</h2>
           <span className="na-badge">LLM 베타</span>
         </div>
-        <select className="na-model-select" defaultValue="3.0">
-          <option value="3.0">3.0 버전</option>
-          <option value="2.5">2.5 버전</option>
-        </select>
       </div>
     
       <div className="report-wrap">

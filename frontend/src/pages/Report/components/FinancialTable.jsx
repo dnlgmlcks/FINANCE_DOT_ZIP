@@ -7,7 +7,7 @@
 import { useState } from 'react';
 
 /* ── 재무제표 mock ─────────────────────────────── */
-const MOCK_FINANCIAL = {
+export const MOCK_FINANCIAL = {
   years: ['2020', '2021', '2022', '2023', '2024'],
   rows: [
     { label: '매출액(억)',    values: ['2,368', '2,796', '3,022', '2,589', '3,009'], dir: [0,0,0,0,0] },
@@ -19,7 +19,7 @@ const MOCK_FINANCIAL = {
 };
 
 /* ── 주요 지표 mock ────────────────────────────── */
-const MOCK_RATIO = {
+export const MOCK_RATIO = {
   years: ['2020', '2021', '2022', '2023', '2024'],
   rows: [
     { label: 'PER',      values: ['21.3', '13.8', '9.4',  '38.2', '11.7'], dir: [0,0,0,-1,1] },
