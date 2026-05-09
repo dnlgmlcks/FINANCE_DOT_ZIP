@@ -4,14 +4,32 @@ from pathlib import Path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-SRC_DIR = BASE_DIR / "src"
+
+# =========================
+# src 경로 강제 등록
+# =========================
+CURRENT_FILE = Path(__file__).resolve()
+
+PROJECT_ROOT = None
+
+for parent in CURRENT_FILE.parents:
+    if (parent / "src").exists():
+        PROJECT_ROOT = parent
+        break
+
+if PROJECT_ROOT is None:
+    raise RuntimeError("src 폴더를 찾을 수 없습니다. 프로젝트 구조를 확인해주세요.")
+
+SRC_DIR = PROJECT_ROOT / "src"
 
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+
+# =========================
+# 내부 모듈 import
+# =========================
 from services.report_service import build_report_response
-from db.queries import search_companies
 
 
 TEMP_COMPANY_DATA = [
@@ -57,45 +75,45 @@ def init_data(request):
     )
 
 
-@api_view(["GET", "POST"])
-def search_company(request):
-    if request.method == "GET":
-        keyword = request.query_params.get("keyword", "").strip()
-    else:
-        keyword = str(request.data.get("keyword", "")).strip()
-
-    if not keyword:
-        return fail_response(
-            message="keyword가 필요합니다.",
-            data=[]
-        )
-
-    # result = search_companies(keyword)
-
-    # return success_response(
-    #     data={
-    #         "count": len(result),
-    #         "companies": result
-    #     },
-    #     message="기업 검색 성공"
-    # )
-
-
 @api_view(["GET"])
 def comprehensive_report(request, stock_code):
+    print("\n===== [1] comprehensive_report 호출됨 =====")
+    print("[2] stock_code:", stock_code)
+
     if not stock_code:
+        print("[ERROR] stock_code 없음")
         return fail_response(
             message="stock_code가 필요합니다.",
             data=None
         )
 
-    result = build_report_response(stock_code)
+    try:
+        print("[3] build_report_response 실행 직전")
+
+        result = build_report_response(stock_code)
+
+        print("[4] build_report_response 실행 완료")
+        print("[5] result:", result)
+
+    except Exception as e:
+        print("[ERROR] build_report_response 내부 오류 발생")
+        print(type(e).__name__, str(e))
+
+        return fail_response(
+            message=f"리포트 생성 중 오류 발생: {str(e)}",
+            data=None
+        )
 
     if result.get("status") == "fail":
+        print("[6] result status = fail")
+        print("[7] message:", result.get("message"))
+
         return fail_response(
             message=result.get("message", "리포트 조회 실패"),
             data=result.get("data")
         )
+
+    print("[8] 최종 응답 반환")
 
     return success_response(
         data=result.get("data"),
