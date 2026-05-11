@@ -35,11 +35,12 @@ full_schema_md = """# Pinecone Vector DB Schema 명세 (finance-dot-news)
 | :--- | :--- | :--- | :--- |
 | **text** | string | 청킹된 뉴스 본문. 용어 정규화 완료 상태. | Retrieval 결과값 |
 | **source** | string | 뉴스 기사의 원본 URL. | 레퍼런스 및 중복 체크용 |
-| **company_name** | string | 대상 기업명. | 확인용 |
-| **stock_code** | string | **[핵심]** 6자리 표준 종목코드. | **Namespace 매칭 필수값** |
+| **company_name** | string | 대상 기업명 (대표 기업). | 확인용 |
+| **stock_codes** | List[string] | 해당 뉴스에 언급된 모든 종목코드 리스트 | **$in 연산자로 필터링** |
 | **date** | string | 발행 일자 (형식: `YYYY-MM-DD`). | **Range Filter 가능** |
 
 ## 4. 데이터 무결성 및 중복 방지 로직
 - **ID 생성**: `hashlib.md5(url).hexdigest() + "_" + chunk_index`
+  - 이제 종목코드와 상관없이 URL이 같으면 동일한 ID를 가집니다.
 - **Deduplication**: 동일한 URL을 가진 기사가 재입력될 경우, 동일 ID로 인식하여 Pinecone 내에서 자동으로 **Overwrite(Upsert)** 처리됩니다.
-- **최신성 유지**: 뉴스 내용이 수정되어 다시 수집되더라도 최신 기사 조각이 기존 데이터를 대체하여 데이터 무결성을 유지합니다.
+- **다중 엔티티 대응**: 한 기사에 여러 회사가 포함될 경우, `stock_codes` 필드에 해당 코드들을 리스트 형태로 모두 담아 단일 레코드로 관리합니다.
