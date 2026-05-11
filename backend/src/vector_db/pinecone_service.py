@@ -94,56 +94,61 @@ class PineconeService:
         return code if code else "000000" # 못 찾을 경우 기본 네임스페이스
 
     def upsert_filtered_news(self, evidence_news: List[Dict[str, Any]], company_name: str):
-        """중복 방지 및 Chunking 적용 후 뉴스 적재"""
-        stock_code = self._get_stock_code(company_name)
-        
-        all_chunks = []
-        all_ids = [] # 각 조각의 고유 ID를 담을 리스트
-        
-        for news in evidence_news:
-            url = news.get("url", "")
-            title = news.get("title", "")
-            processed_text = self._preprocess_content(title, news.get('content', ''))
+            """중복 방지 및 Chunking 적용 후 뉴스 적재"""
+            stock_code = self._get_stock_code(company_name)
             
-            # 1. 뉴스 기사의 고유 ID 생성 (URL이 있으면 URL로, 없으면 제목으로 해싱)
+            all_chunks = []
+            all_ids = []    # 각 조각의 고유 ID를 담을 리스트
+            
+            for news in evidence_news:
+                url = news.get("url", "")
+                title = news.get("title", "")
+                processed_text = self._preprocess_content(title, news.get('content', ''))
+                
+                # 1. 뉴스 기사의 고유 ID 생성 (URL이 있으면 URL로, 없으면 제목으로 해싱)
             # 기사 하나가 여러 조각(Chunk)으로 나뉘므로, 조각마다 고유번호를 붙입니다.
-            base_id = hashlib.md5(url.encode() if url else title.encode()).hexdigest()
-            
-            metadata = {
-                "source": url,
-                "company_name": company_name, 
-                "stock_code": stock_code,
-                "date": news.get("published_date", "Unknown")
-            }
-            
-            chunks = self.text_splitter.create_documents(
-                texts=[processed_text], 
-                metadatas=[metadata]
-            )
-            
-            for i, chunk in enumerate(chunks):
-                all_chunks.append(chunk)
+                base_id = hashlib.md5(url.encode() if url else title.encode()).hexdigest()
+
+                # 메타데이터에 리스트 형태로 저장 (예: ["005930", "000660"])
+                metadata = {
+                    "source": url,
+                    "company_name": company_name,
+                    "stock_codes": [stock_code], # 리스트로 관리
+                    "date": news.get("published_date", "Unknown")
+                }
+                
+                chunks = self.text_splitter.create_documents(
+                    texts=[processed_text], 
+                    metadatas=[metadata]
+                )
+                
                 # 예: "해시값_0", "해시값_1" 식으로 ID 부여
-                all_ids.append(f"{base_id}_{i}")
+                for i, chunk in enumerate(chunks):
+                    all_chunks.append(chunk)
+                    all_ids.append(f"{base_id}_{i}")
 
-        if all_chunks:
-            # ids 파라미터를 넘겨주면 Pinecone이 중복 ID를 체크해서 덮어쓰기합니다.
-            self.vector_store.add_documents(
-                documents=all_chunks, 
-                ids=all_ids, 
-                namespace=stock_code
-            )
-            print(f"📦 [Pinecone] {company_name}({stock_code}) 뉴스 조각 {len(all_chunks)}건 적재/갱신 완료")
+            if all_chunks:
+                # ids 파라미터를 넘겨주면 Pinecone이 중복 ID를 체크해서 덮어쓰기합니다.
+                self.vector_store.add_documents(
+                    documents=all_chunks, 
+                    ids=all_ids 
+                )
+                print(f"📦 [Pinecone] {company_name} 데이터 통합 공간(Default) 적재 완료")
 
-    def get_context_for_report(self, query: str, company_name: str, k: int = 3) -> str:
-        """종목코드를 찾아 해당 Namespace만 정밀 검색"""
-        stock_code = self._get_stock_code(company_name)
-        
-        docs = self.vector_store.similarity_search(
-            query, k=k, namespace=stock_code
-        )
-        
-        if not docs: 
-            return f"'{company_name}'({stock_code})와 관련된 뉴스 근거를 찾을 수 없습니다."
+    def get_context_for_report(self, query: str, company_name: str, k: int = 10) -> str:
+            """Metadata 필터링으로 검색"""
+            stock_code = self._get_stock_code(company_name)
             
-        return "\n\n".join([f"--- 기사 근거 ---\n{d.page_content}" for d in docs])
+            # 1. stock_codes 리스트 안에 해당 코드가 포함되어 있는지 필터링하여 검색
+            docs = self.vector_store.similarity_search(
+                query, 
+                k=k, 
+                filter={"stock_codes": {"$in": [stock_code]}} 
+            )
+            
+            # 2. 검색 결과가 없을 경우 메시지 반환
+            if not docs: 
+                return f"'{company_name}'({stock_code}) 관련 근거를 찾을 수 없습니다."
+                
+            # 3. 검색된 문서들을 하나의 컨텍스트 문자열로 합쳐서 리턴
+            return "\n\n".join([f"--- 기사 근거 ---\n{d.page_content}" for d in docs])
