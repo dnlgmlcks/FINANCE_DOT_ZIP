@@ -26,12 +26,6 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 
-# =========================
-# 내부 모듈 import
-# =========================
-from services.report_service import build_report_response
-
-
 TEMP_COMPANY_DATA = [
     {"CORP_ID": "001", "CORP_NAME": "삼성전자", "TICKER": "005930"},
     {"CORP_ID": "002", "CORP_NAME": "SK하이닉스", "TICKER": "000660"},
@@ -75,6 +69,33 @@ def init_data(request):
     )
 
 
+@api_view(["GET", "POST"])
+def search_company(request):
+    if request.method == "GET":
+        keyword = request.query_params.get("keyword", "").strip()
+    else:
+        keyword = str(request.data.get("keyword", "")).strip()
+
+    if not keyword:
+        return fail_response(
+            message="keyword가 필요합니다.",
+            data=[]
+        )
+
+    result = [
+        company for company in TEMP_COMPANY_DATA
+        if keyword in company["CORP_NAME"] or keyword in company["TICKER"]
+    ]
+
+    return success_response(
+        data={
+            "count": len(result),
+            "companies": result
+        },
+        message="기업 검색 성공"
+    )
+
+
 @api_view(["GET"])
 def comprehensive_report(request, stock_code):
     print("\n===== [1] comprehensive_report 호출됨 =====")
@@ -88,12 +109,14 @@ def comprehensive_report(request, stock_code):
         )
 
     try:
-        print("[3] build_report_response 실행 직전")
+        print("[3] build_report_response import 직전")
+        from services.report_service import build_report_response
 
+        print("[4] build_report_response 실행 직전")
         result = build_report_response(stock_code)
 
-        print("[4] build_report_response 실행 완료")
-        print("[5] result:", result)
+        print("[5] build_report_response 실행 완료")
+        print("[6] result:", result)
 
     except Exception as e:
         print("[ERROR] build_report_response 내부 오류 발생")
@@ -105,15 +128,15 @@ def comprehensive_report(request, stock_code):
         )
 
     if result.get("status") == "fail":
-        print("[6] result status = fail")
-        print("[7] message:", result.get("message"))
+        print("[7] result status = fail")
+        print("[8] message:", result.get("message"))
 
         return fail_response(
             message=result.get("message", "리포트 조회 실패"),
             data=result.get("data")
         )
 
-    print("[8] 최종 응답 반환")
+    print("[9] 최종 응답 반환")
 
     return success_response(
         data=result.get("data"),
