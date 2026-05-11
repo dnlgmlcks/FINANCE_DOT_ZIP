@@ -1,8 +1,8 @@
-from services.finance_service import calculate_finance_summary
-from services.signal_service import generate_signals
-from services.industry_classifier import classify_industry
-from services.detected_change_service import build_detected_changes
-from db.queries import fetch_company_info_by_stock_code
+from src.services.finance_service import calculate_finance_summary
+from src.services.signal_service import generate_signals
+from src.services.industry_classifier import classify_industry
+from src.services.detected_change_service import build_detected_changes
+from src.db.queries import fetch_company_info_by_stock_code
 
 
 def build_report_response(stock_code: str):

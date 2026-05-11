@@ -110,7 +110,7 @@ def comprehensive_report(request, stock_code):
 
     try:
         print("[3] build_report_response import 직전")
-        from services.report_service import build_report_response
+        from src.services.report_service import build_report_response
 
         print("[4] build_report_response 실행 직전")
         result = build_report_response(stock_code)
