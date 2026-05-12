@@ -23,6 +23,7 @@ function App() {
   const [allCompanies, setAllCompanies]     = useState([]);
   const [filteredData, setFilteredData]     = useState([]);
   const [searchCollapsed, setSearchCollapsed] = useState(false);
+  const [searchResult, setSearchResult]     = useState(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -41,18 +42,40 @@ function App() {
 
   const handleSearch = async (keyword) => {
     if (!keyword) { alert('검색어를 입력해주세요.'); return; }
+
+    // 내용 초기화 
+    setSearchResult(null);
+    // 로딩바
     setLoading(true);
+
+    // 전송 파라미터
     const options = {
       svcId:  'searchCompany',
       strUrl: '/api/searchCompany',
       param:  { keyword },
       method: 'POST',
       pCall:  (svcId, responseData, errCd, msgTp, msgCd, msgText) => {
-        if (errCd !== 0) alert('통신 실패: ' + msgText);
+
+        // 데이터 체크
+        const { reportData, newsData, disclosureData } = responseData ?? {};
+
+        // setTimeout(function() {
+        //   console.log('TEST!');
+        // }, 3000);
+
+        if (!reportData || !newsData || !disclosureData) {
+            alert('일부 데이터가 누락되었습니다.');
+            
+        } else {
+            setSearchResult(responseData);
+        }
+
         setLoading(false);
       },
     };
+
     try {
+      // 조회
       await gfn_transaction(options);
     } catch {
       setLoading(false);
@@ -60,6 +83,10 @@ function App() {
   };
 
   const renderPage = () => {
+
+    // searchResult 없으면 렌더링 X -> 이건 백엔드가 다 붙지 않은 상황에서 잠시 주석처리
+    // if (!searchResult) return null;
+
     const commonProps = { reportData: SAMPLE_NORMAL_AI_INPUT , disclosureData: MOCK };
 
     switch (activeTab) {
