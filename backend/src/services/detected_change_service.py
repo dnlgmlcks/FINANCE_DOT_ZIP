@@ -234,6 +234,35 @@ def get_year_item_map(finance_summary):
     }
 
 
+def get_base_year(year, finance_summary):
+    """
+    detected_changes의 비교 기준 연도 반환.
+
+    기본적으로 finance_summary에서 현재 year보다 작은 연도 중
+    가장 가까운 연도를 base_year로 사용한다.
+    예: year=2023이면 base_year=2022
+    """
+    if year is None:
+        return None
+
+    years = sorted([
+        item.get("year")
+        for item in finance_summary
+        if item.get("year") is not None
+    ])
+
+    previous_years = [
+        target_year
+        for target_year in years
+        if target_year < year
+    ]
+
+    if previous_years:
+        return previous_years[-1]
+
+    return None
+
+
 def get_metric_value(item, metric_key):
     if not item:
         return None
@@ -277,6 +306,8 @@ def build_detected_change(signal, finance_summary):
         return None
 
     year = signal.get("year")
+    base_year = get_base_year(year, finance_summary)
+
     year_item_map = get_year_item_map(finance_summary)
     current_item = year_item_map.get(year)
 
@@ -288,6 +319,7 @@ def build_detected_change(signal, finance_summary):
         "metric_key": metric_key,
         "metric_label": rule["metric_label"],
         "year": year,
+        "base_year": base_year,
         "change_type": rule["change_type"],
         "direction": rule["direction"],
         "severity": SEVERITY_MAP.get(signal.get("severity"), "medium"),
