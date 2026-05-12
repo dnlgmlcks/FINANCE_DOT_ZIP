@@ -11,11 +11,11 @@ treated as not observed in the selected period.
 from __future__ import annotations
 
 import argparse
+import ast
 import csv
 import json
 import re
 import time
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +32,14 @@ from export_disclosure_business_sections import (
 
 
 DISCLOSURE_EXPORT_ROOT = EXPORT_ROOT / "disclosure"
+DISCLOSURE_DICTIONARY_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "backend"
+    / "src"
+    / "vector_db"
+    / "참고"
+    / "disclosure_dictionary.py"
+)
 DEFAULT_BATCH_IDS = [
     "konex_001",
     "kosdaq_001",
@@ -121,16 +129,11 @@ CSV_HEADERS = [
     "event_category",
     "event_code",
     "event_name",
-    "has_event",
-    "rcept_no",
     "rcept_date",
-    "source_bgn_de",
-    "source_end_de",
     "report_url",
     "source_api",
     "summary",
     "details_json",
-    "collected_at",
 ]
 
 SUMMARY_EXCLUDED_FIELDS = {
@@ -143,8 +146,53 @@ SUMMARY_EXCLUDED_FIELDS = {
 }
 
 
+def load_disclosure_detail_keys() -> set[str]:
+    if not DISCLOSURE_DICTIONARY_PATH.exists():
+        raise FileNotFoundError(f"Disclosure dictionary not found: {DISCLOSURE_DICTIONARY_PATH}")
+
+    tree = ast.parse(DISCLOSURE_DICTIONARY_PATH.read_text(encoding="utf-8"))
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        if not any(
+            isinstance(target, ast.Name) and target.id == "DISCLOSURE_DICTIONARY"
+            for target in node.targets
+        ):
+            continue
+        dictionary = ast.literal_eval(node.value)
+        return set(dictionary.keys())
+
+    raise ValueError("DISCLOSURE_DICTIONARY is not defined.")
+
+
+DISCLOSURE_DETAIL_KEYS = load_disclosure_detail_keys()
+
+
 def single_line_text(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value)).strip()
+
+
+def clean_detail_value(value: Any) -> Any:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text = single_line_text(value)
+        if not text or text == "-":
+            return None
+        return text
+    return value
+
+
+def filter_details(item: dict[str, Any]) -> dict[str, Any]:
+    filtered: dict[str, Any] = {}
+    for key, value in item.items():
+        if key not in DISCLOSURE_DETAIL_KEYS:
+            continue
+        cleaned_value = clean_detail_value(value)
+        if cleaned_value is None:
+            continue
+        filtered[key] = cleaned_value
+    return filtered
 
 
 def load_companies(batch_id: str, company_limit: int | None) -> list[dict[str, str]]:
@@ -220,14 +268,12 @@ def build_event_row(
     company: dict[str, str],
     event_api: dict[str, str],
     item: dict[str, Any],
-    bgn_de: str,
-    end_de: str,
-    collected_at: str,
 ) -> dict[str, Any]:
     rcept_no = str(item.get("rcept_no", "")).strip()
     stock_code = item.get("stock_code") or company.get("stock_code", "")
     corp_code = item.get("corp_code") or company.get("corp_code", "")
     company_name = item.get("corp_name") or company.get("corp_name", "")
+    filtered_details = filter_details(item)
 
     return {
         "batch_id": batch_id,
@@ -237,16 +283,11 @@ def build_event_row(
         "event_category": event_api["category"],
         "event_code": event_api["event_code"],
         "event_name": event_api["event_name"],
-        "has_event": "true",
-        "rcept_no": rcept_no,
         "rcept_date": rcept_date_from_no(rcept_no),
-        "source_bgn_de": bgn_de,
-        "source_end_de": end_de,
         "report_url": disclosure_url(rcept_no) if rcept_no else "",
         "source_api": event_api["endpoint"],
-        "summary": build_summary(item),
-        "details_json": json.dumps(item, ensure_ascii=False, sort_keys=True),
-        "collected_at": collected_at,
+        "summary": build_summary(filtered_details),
+        "details_json": json.dumps(filtered_details, ensure_ascii=False, sort_keys=True),
     }
 
 
@@ -266,7 +307,6 @@ def export_major_event_occurrences(
     companies = load_companies(batch_id, company_limit)
     output_rows: list[dict[str, Any]] = []
     seen_keys: set[tuple[str, str, str]] = set()
-    collected_at = datetime.now().isoformat(timespec="seconds")
     counters = {
         "companies_checked": 0,
         "api_calls": 0,
@@ -322,9 +362,6 @@ def export_major_event_occurrences(
                         company=company,
                         event_api=event_api,
                         item=item,
-                        bgn_de=bgn_de,
-                        end_de=end_de,
-                        collected_at=collected_at,
                     )
                 )
                 counters["events"] += 1
