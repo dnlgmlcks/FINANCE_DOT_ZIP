@@ -24,4 +24,10 @@
   justify-content: center;
   padding: 12px 0;
   flex-shrink: 0;
+  /* 화면의 다른 요소를 움직이지 않으면서 화면 중간에 오도록 수정 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999
 }

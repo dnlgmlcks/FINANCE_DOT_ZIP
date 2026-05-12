@@ -69,6 +69,7 @@ export function SearchBox({ onSearch, onKeyIn, searchResults }) {
           onChange={handleInputChange}
           onKeyDown={handleInputKeydown}
           style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          maxLength="20"
         />
         {/* 검색 결과가 있을 때만 ul 표시 */}
         {searchResults && searchResults.length > 0 && (
