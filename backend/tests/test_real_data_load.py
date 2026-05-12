@@ -1,11 +1,10 @@
-import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
 root_path = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_path))
-from src.vector_db.pinecone_service import PineconeService
+from src.vector_db.참고.pinecone_service import PineconeService
 
 load_dotenv()
 
