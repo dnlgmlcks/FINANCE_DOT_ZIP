@@ -4,7 +4,8 @@ AI 연동용 detected_changes 생성 모듈
 역할:
 - signal_service.py에서 생성된 signals를
   AI 파트가 사용하기 쉬운 detected_changes 구조로 변환
-- Tavily 검색 키워드 생성에 바로 사용할 수 있도록 metric_key, search_keywords 포함
+- Tavily 검색 키워드 생성에 바로 사용할 수 있도록
+  metric_key, signal_code, search_keywords, query_hint 포함
 """
 
 
@@ -235,13 +236,6 @@ def get_year_item_map(finance_summary):
 
 
 def get_base_year(year, finance_summary):
-    """
-    detected_changes의 비교 기준 연도 반환.
-
-    기본적으로 finance_summary에서 현재 year보다 작은 연도 중
-    가장 가까운 연도를 base_year로 사용한다.
-    예: year=2023이면 base_year=2022
-    """
     if year is None:
         return None
 
@@ -270,8 +264,10 @@ def get_metric_value(item, metric_key):
     if metric_key == "asset_turnover":
         revenue = item.get("revenue")
         total_assets = item.get("total_assets")
+
         if revenue is None or total_assets in (None, 0):
             return None
+
         return round(revenue / total_assets, 4)
 
     return item.get(metric_key)
@@ -294,14 +290,22 @@ def get_metric_yoy(item, metric_key):
     }
 
     yoy_key = yoy_key_map.get(metric_key)
+
     if not yoy_key:
         return None
 
     return item.get(yoy_key)
 
 
-def build_detected_change(signal, finance_summary):
+def build_detected_change(
+    signal,
+    finance_summary,
+    company_name="",
+    stock_code="",
+    industry_group="unknown",
+):
     rule = SIGNAL_TO_CHANGE_RULES.get(signal.get("signal"))
+
     if not rule:
         return None
 
@@ -311,31 +315,69 @@ def build_detected_change(signal, finance_summary):
     year_item_map = get_year_item_map(finance_summary)
     current_item = year_item_map.get(year)
 
-    metric_key = rule["metric_key"]
+    metric_key = signal.get("metric_key") or rule["metric_key"]
     current_value = get_metric_value(current_item, metric_key)
     yoy_change_rate = get_metric_yoy(current_item, metric_key)
+
+    source_signal = signal.get("signal", "")
+    signal_type = signal.get("type", "unknown")
+    signal_code = signal.get("signal_code")
+
+    query_hint = f"{company_name} {source_signal} 원인".strip()
 
     return {
         "metric_key": metric_key,
         "metric_label": rule["metric_label"],
         "year": year,
         "base_year": base_year,
+
         "change_type": rule["change_type"],
         "direction": rule["direction"],
-        "severity": SEVERITY_MAP.get(signal.get("severity"), "medium"),
+
+        "severity": SEVERITY_MAP.get(
+            signal.get("severity"),
+            "medium"
+        ),
+
+        "signal_type": signal_type,
+        "signal_code": signal_code,
+
+        "company_name": company_name,
+        "stock_code": stock_code,
+        "industry_group": industry_group,
+
         "current_value": current_value,
         "yoy_change_rate": yoy_change_rate,
+
         "description": signal.get("description", ""),
+        "source_signal": source_signal,
+
+        "query_hint": query_hint,
         "search_keywords": rule["search_keywords"],
-        "source_signal": signal.get("signal", ""),
     }
 
 
-def build_detected_changes(finance_summary, signals):
+def build_detected_changes(
+    finance_summary,
+    signals,
+    company_name="",
+    stock_code="",
+    industry_group="unknown",
+):
     detected_changes = []
 
+    if not signals:
+        return detected_changes
+
     for signal in signals:
-        change = build_detected_change(signal, finance_summary)
+        change = build_detected_change(
+            signal,
+            finance_summary,
+            company_name=company_name,
+            stock_code=stock_code,
+            industry_group=industry_group,
+        )
+
         if change:
             detected_changes.append(change)
 

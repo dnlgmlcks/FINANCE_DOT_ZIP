@@ -1,16 +1,26 @@
-from services.trigger_rules import (
+from src.services.trigger_rules import (
     get_common_trigger_rules,
     get_industry_trigger_rules,
 )
 
 
-def make_signal(year, signal_type, severity, signal, description):
+def make_signal(
+    year,
+    signal_type,
+    severity,
+    signal,
+    description,
+    signal_code=None,
+    metric_key=None,
+):
     return {
         "year": year,
         "type": signal_type,
         "severity": severity,
         "signal": signal,
-        "description": description
+        "signal_code": signal_code,
+        "metric_key": metric_key,
+        "description": description,
     }
 
 
@@ -26,7 +36,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="DEBT_RATIO_HIGH",
+            metric_key="debt_ratio",
         ))
 
     operating_margin = item.get("operating_margin")
@@ -37,7 +49,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="OPERATING_MARGIN_NEGATIVE",
+            metric_key="operating_margin",
         ))
 
     net_income = item.get("net_income")
@@ -48,7 +62,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="NET_INCOME_NEGATIVE",
+            metric_key="net_income",
         ))
 
     current_ratio = item.get("current_ratio")
@@ -59,7 +75,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="CURRENT_RATIO_LOW",
+            metric_key="current_ratio",
         ))
 
     interest_coverage_ratio = item.get("interest_coverage_ratio")
@@ -73,7 +91,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="INTEREST_COVERAGE_LOW",
+            metric_key="interest_coverage_ratio",
         ))
 
     revenue_yoy = item.get("revenue_yoy")
@@ -84,7 +104,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=revenue_yoy)
+            rule["description_template"].format(value=revenue_yoy),
+            signal_code="REVENUE_DROP",
+            metric_key="revenue",
         ))
 
     operating_income_yoy = item.get("operating_income_yoy")
@@ -96,7 +118,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
                 "negative",
                 rule["severity"],
                 rule["signal"],
-                rule["description_template"].format(value=operating_income_yoy)
+                rule["description_template"].format(value=operating_income_yoy),
+                signal_code="OPERATING_INCOME_DROP_HIGH",
+                metric_key="operating_income",
             ))
         elif operating_income_yoy <= negative_rules["operating_income_drop_medium"]["threshold"]:
             rule = negative_rules["operating_income_drop_medium"]
@@ -105,7 +129,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
                 "negative",
                 rule["severity"],
                 rule["signal"],
-                rule["description_template"].format(value=operating_income_yoy)
+                rule["description_template"].format(value=operating_income_yoy),
+                signal_code="OPERATING_INCOME_DROP_MEDIUM",
+                metric_key="operating_income",
             ))
 
     debt_ratio_change = item.get("debt_ratio_change")
@@ -115,7 +141,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             "MEDIUM",
             "부채비율 급증",
-            f"전년 대비 부채비율이 {debt_ratio_change}%p 증가했습니다."
+            f"전년 대비 부채비율이 {debt_ratio_change}%p 증가했습니다.",
+            signal_code="DEBT_RATIO_INCREASE",
+            metric_key="debt_ratio",
         ))
 
     receivables_turnover_yoy = item.get("receivables_turnover_yoy")
@@ -129,7 +157,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=receivables_turnover_yoy)
+            rule["description_template"].format(value=receivables_turnover_yoy),
+            signal_code="RECEIVABLES_TURNOVER_DROP",
+            metric_key="receivables_turnover",
         ))
 
     inventory_turnover_yoy = item.get("inventory_turnover_yoy")
@@ -143,7 +173,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=inventory_turnover_yoy)
+            rule["description_template"].format(value=inventory_turnover_yoy),
+            signal_code="INVENTORY_TURNOVER_DROP",
+            metric_key="inventory_turnover",
         ))
 
     if previous_item:
@@ -161,7 +193,9 @@ def add_common_negative_signals(signals, item, previous_item, rules):
                 "negative",
                 "HIGH",
                 "영업이익 적자 전환",
-                "전년도 흑자였던 영업이익이 당해 연도 적자로 전환되었습니다."
+                "전년도 흑자였던 영업이익이 당해 연도 적자로 전환되었습니다.",
+                signal_code="OPERATING_INCOME_TURN_TO_LOSS",
+                metric_key="operating_income",
             ))
 
 
@@ -177,7 +211,9 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=revenue_yoy)
+            rule["description_template"].format(value=revenue_yoy),
+            signal_code="REVENUE_JUMP",
+            metric_key="revenue",
         ))
 
     net_income_yoy = item.get("net_income_yoy")
@@ -188,25 +224,25 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=net_income_yoy)
+            rule["description_template"].format(value=net_income_yoy),
+            signal_code="NET_INCOME_GROWTH",
+            metric_key="net_income",
         ))
 
     operating_income_yoy = item.get("operating_income_yoy")
-
     if (
         operating_income_yoy is not None
         and operating_income_yoy >= positive_rules["earnings_surprise"]["threshold"]
     ):
         rule = positive_rules["earnings_surprise"]
-
         signals.append(make_signal(
             year,
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(
-                value=operating_income_yoy
-            )
+            rule["description_template"].format(value=operating_income_yoy),
+            signal_code="EARNINGS_SURPRISE",
+            metric_key="operating_income",
         ))
 
     total_assets = item.get("total_assets")
@@ -221,13 +257,14 @@ def add_common_positive_signals(signals, item, previous_item, rules):
 
         if asset_turnover >= 0.7:
             rule = positive_rules["asset_efficiency_up"]
-
             signals.append(make_signal(
                 year,
                 "positive",
                 rule["severity"],
                 rule["signal"],
-                rule["description_template"]
+                rule["description_template"],
+                signal_code="ASSET_EFFICIENCY_UP",
+                metric_key="asset_turnover",
             ))
 
     if previous_item:
@@ -246,13 +283,14 @@ def add_common_positive_signals(signals, item, previous_item, rules):
 
             if asset_growth >= positive_rules["capacity_expansion"]["threshold"]:
                 rule = positive_rules["capacity_expansion"]
-
                 signals.append(make_signal(
                     year,
                     "positive",
                     rule["severity"],
                     rule["signal"],
-                    rule["description_template"]
+                    rule["description_template"],
+                    signal_code="CAPACITY_EXPANSION",
+                    metric_key="total_assets",
                 ))
 
     equity_ratio_change = item.get("equity_ratio_change")
@@ -263,7 +301,9 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=equity_ratio_change)
+            rule["description_template"].format(value=equity_ratio_change),
+            signal_code="EQUITY_RATIO_IMPROVE",
+            metric_key="equity_ratio",
         ))
 
     borrowings_dependency_change = item.get("borrowings_dependency_change")
@@ -277,7 +317,9 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=borrowings_dependency_change)
+            rule["description_template"].format(value=borrowings_dependency_change),
+            signal_code="BORROWINGS_DEPENDENCY_DOWN",
+            metric_key="borrowings_dependency",
         ))
 
     operating_cash_flow = item.get("operating_cash_flow")
@@ -294,7 +336,9 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description"]
+            rule["description"],
+            signal_code="CASH_FLOW_STRONG",
+            metric_key="operating_cash_flow",
         ))
 
     if previous_item:
@@ -312,33 +356,30 @@ def add_common_positive_signals(signals, item, previous_item, rules):
                 "positive",
                 "HIGH",
                 "영업이익 흑자 전환",
-                "전년도 적자였던 영업이익이 당해 연도 흑자로 전환되었습니다."
+                "전년도 적자였던 영업이익이 당해 연도 흑자로 전환되었습니다.",
+                signal_code="OPERATING_INCOME_TURN_TO_PROFIT",
+                metric_key="operating_income",
             ))
 
 
 def add_industry_specific_signals(signals, item, industry_group, industry_rule):
-    """
-    업종별 추가 Trigger.
-
-    현재는 1차 버전이라 공통 Trigger 위에 보조 시그널만 추가한다.
-    이후 업종별 문서 기준이 확정되면 이 함수에 조건을 늘리면 된다.
-    """
     year = item["year"]
 
     if industry_group == "tech_equipment":
         operating_income_yoy = item.get("operating_income_yoy")
-        revenue_yoy = item.get("revenue_yoy")
 
         if (
-                operating_income_yoy is not None
-                and operating_income_yoy <= -50
+            operating_income_yoy is not None
+            and operating_income_yoy <= -50
         ):
             signals.append(make_signal(
                 year,
                 "negative",
                 "HIGH",
                 "기술 업종 수익성 급락",
-                "영업이익이 전년 대비 크게 감소하여 기술 업종 특성상 수익성 변동 위험이 있습니다."
+                "영업이익이 전년 대비 크게 감소하여 기술 업종 특성상 수익성 변동 위험이 있습니다.",
+                signal_code="TECH_PROFITABILITY_DROP",
+                metric_key="operating_income",
             ))
 
     if industry_group == "heavy_manufacturing":
@@ -351,7 +392,9 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "MEDIUM",
                 "제조업 재고 부담 증가",
-                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락하여 재고 부담 가능성이 있습니다."
+                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락하여 재고 부담 가능성이 있습니다.",
+                signal_code="MANUFACTURING_INVENTORY_BURDEN",
+                metric_key="inventory_turnover",
             ))
 
         if borrowings_dependency_change is not None and borrowings_dependency_change >= 5:
@@ -360,7 +403,9 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "MEDIUM",
                 "제조업 차입 부담 증가",
-                f"차입금의존도가 전년 대비 {borrowings_dependency_change}%p 증가했습니다."
+                f"차입금의존도가 전년 대비 {borrowings_dependency_change}%p 증가했습니다.",
+                signal_code="MANUFACTURING_BORROWINGS_BURDEN",
+                metric_key="borrowings_dependency",
             ))
 
     if industry_group == "distribution_service":
@@ -373,7 +418,9 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "MEDIUM",
                 "유통/서비스 채권 회수 둔화",
-                f"매출채권회전율이 전년 대비 {receivables_turnover_yoy}% 하락했습니다."
+                f"매출채권회전율이 전년 대비 {receivables_turnover_yoy}% 하락했습니다.",
+                signal_code="DISTRIBUTION_RECEIVABLES_COLLECTION_SLOWDOWN",
+                metric_key="receivables_turnover",
             ))
 
         if inventory_turnover_yoy is not None and inventory_turnover_yoy <= -20:
@@ -382,7 +429,9 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "MEDIUM",
                 "유통 재고 회전 둔화",
-                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락했습니다."
+                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락했습니다.",
+                signal_code="DISTRIBUTION_INVENTORY_TURNOVER_DROP",
+                metric_key="inventory_turnover",
             ))
 
     if industry_group == "construction_order":
@@ -400,7 +449,9 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "HIGH",
                 "수주형 업종 현금흐름 악화",
-                "순이익은 흑자이나 영업활동현금흐름이 음수로 수주형 업종의 현금 회수 위험이 있습니다."
+                "순이익은 흑자이나 영업활동현금흐름이 음수로 수주형 업종의 현금 회수 위험이 있습니다.",
+                signal_code="CONSTRUCTION_CASH_FLOW_RISK",
+                metric_key="operating_cash_flow",
             ))
 
     if industry_group == "facility_service":
@@ -412,14 +463,13 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "MEDIUM",
                 "장치형 서비스 이자 부담 주의",
-                "이자보상배율이 2 미만으로 장치형 서비스업의 금융비용 부담을 점검해야 합니다."
+                "이자보상배율이 2 미만으로 장치형 서비스업의 금융비용 부담을 점검해야 합니다.",
+                signal_code="FACILITY_SERVICE_INTEREST_BURDEN",
+                metric_key="interest_coverage_ratio",
             ))
 
 
 def remove_duplicate_signals(signals):
-    """
-    같은 연도, 유형, 시그널명이 중복되면 한 번만 남긴다.
-    """
     result = []
     seen = set()
 
@@ -427,6 +477,7 @@ def remove_duplicate_signals(signals):
         key = (
             signal.get("year"),
             signal.get("type"),
+            signal.get("signal_code"),
             signal.get("signal"),
         )
 
@@ -440,16 +491,6 @@ def remove_duplicate_signals(signals):
 
 
 def generate_signals(finance_summary, industry_info=None):
-    """
-    finance_summary를 기반으로 Warning / Positive Signal을 즉시 계산한다.
-
-    industry_info 예시:
-    {
-        "industry_group": "tech_equipment",
-        "industry_group_name": "기술 및 장치 산업",
-        "is_excluded": False
-    }
-    """
     signals = []
 
     common_rules = get_common_trigger_rules()
@@ -467,6 +508,8 @@ def generate_signals(finance_summary, industry_info=None):
                 "type": "excluded",
                 "severity": "INFO",
                 "signal": "분석 제외 업종",
+                "signal_code": "INDUSTRY_EXCLUDED",
+                "metric_key": None,
                 "description": industry_info.get(
                     "reason",
                     "해당 업종은 일반 재무 Trigger 분석 대상에서 제외됩니다."
