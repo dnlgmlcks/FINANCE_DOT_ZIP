@@ -11,12 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-print(f'{BASE_DIR=}')
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -27,8 +25,7 @@ SECRET_KEY = 'django-insecure-sw&_2#9k-r8v)3#-afu3@)yjn_kp&3-cv926+(&7*j71(439m_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0']
 
 # Application definition
 
@@ -131,5 +128,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS 설정
 # CORS 추가
 CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1:8000', 'http://localhost:5173')
+    'http://127.0.0.1:8000', 'http://localhost:3000')
 CORS_ALLOW_CREDENTIALS = True
+
+# 환경 변수에서 값을 읽어옴 (설정 안 되어 있으면 'local'을 기본값으로)
+ENV_MODE = os.getenv('DJANGO_ENV', 'local')
+
+if ENV_MODE == 'dev':
+    FRONTEND_URL = "https://dev-front.example.com" # 개발 서버용이고 실제로는 없습니다!
+else:
+    FRONTEND_URL = "http://localhost:3000"
