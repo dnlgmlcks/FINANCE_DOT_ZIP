@@ -3,8 +3,15 @@ import NewsSummary from './components/NewsSummary';
 import NewsSource from './components/NewsSource';
 import './NewsAnalysis.css';
 
+function getLatestChanges(changes) {
+  if (!changes?.length) return changes;
+  const maxYear = Math.max(...changes.map(c => c.year ?? 0));
+  return changes.filter(c => c.year === maxYear);
+}
+
 export default function NewsAnalysis({ newsData }) {
-  const detectedChanges = newsData?.detected_changes ?? null;
+  const rawChanges      = newsData?.detected_changes ?? null;
+  const detectedChanges = rawChanges ? getLatestChanges(rawChanges) : null;
   const evidenceNews    = newsData?.evidence_news    ?? null;
 
   return (

@@ -1,37 +1,37 @@
-import SignalList from './components/SignalList';
-import NewsSummary from './components/NewsSummary';
-import NewsSource from './components/NewsSource';
-import './NewsAnalysis.css';
+import BasicInfo from './components/BasicInfo';
+import PriceSignal from './components/PriceSignal';
+import RevenueChart from './components/RevenueChart';
+import FinancialTable from './components/FinancialTable';
+import './Report.css';
 
-function getLatestChanges(changes) {
-  if (!changes?.length) return changes;
-  const maxYear = Math.max(...changes.map(c => c.year ?? 0));
-  return changes.filter(c => c.year === maxYear);
-}
-
-export default function NewsAnalysis({ newsData }) {
-  const rawChanges      = newsData?.detected_changes ?? null;
-  const detectedChanges = rawChanges ? getLatestChanges(rawChanges) : null;
-  const evidenceNews    = newsData?.evidence_news    ?? null;
-
+export default function Report({ reportData }) {
   return (
     <div>
       {/* 페이지 헤더 */}
       <div className="na-page-header">
         <div className="na-title-group">
-          <h2 className="na-page-title">뉴스 기반 변동 사유 분석</h2>
+          <h2 className="na-page-title">기업 분석 기본 정보</h2>
           <span className="na-badge">LLM 베타</span>
         </div>
       </div>
 
-      {/* 최근 이슈 + 변동 사유 (2열) */}
-      <SignalList evidenceNews={evidenceNews} detectedChanges={detectedChanges} />
+      <div className="report-wrap">
+        {/* 상단: 기본정보 + 차트 */}
+        <div className="report-top">
+          <div className="report-left-col">
+            <BasicInfo />
+            <PriceSignal />
+          </div>
+          <div className="report-right-col">
+            <RevenueChart />
+          </div>
+        </div>
 
-      {/* 주요 경영 판단 요약 (Signal 태그 흐름) */}
-      <NewsSummary detectedChanges={detectedChanges} />
-
-      {/* 뉴스 출처 */}
-      <NewsSource evidenceNews={evidenceNews} />
+        {/* 하단: 재무제표 + 주요지표 */}
+        <div className="report-bottom">
+          <FinancialTable />
+        </div>
+      </div>
     </div>
   );
 }
