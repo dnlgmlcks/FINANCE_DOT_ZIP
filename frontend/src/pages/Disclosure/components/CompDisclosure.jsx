@@ -1,35 +1,109 @@
-/* 
-    Disclosure
+/*
+    CompDisclosure
 
     Author        - jyhong
     Created At    - 2026-05-09
-    Description   - 공시보고서 기반 분석 보고서 페이지 
-    Features      - 
-      1. LLM 연동을 통한 자동 분석 결과 제공 (향후 업데이트 예정)
+    Description   - AI 리포트 기반 공시 분석 보고서 컴포넌트
+    Features      -
+      1. EXPECTED_AI_OUTPUT 형식(report 섹션) 렌더링
+      2. 구형 { title, sections, warnings } 형식 fallback 지원
 */
-export default function CompDisclosure({ reportData }) {
-  const d = reportData;
 
-  if (!d || !d.sections) {
-    return (
-      <div className="dc-report r-card">
-        <p style={{ color: 'var(--text-muted, #888)', textAlign: 'center', padding: '40px 0' }}>
-          공시 데이터가 없습니다.
-        </p>
-      </div>
-    );
-  }
+const RISK_LABEL = { high: '고위험', medium: '주의', low: '안정', normal: '안정' };
+const RISK_COLOR = {
+  high:   { color: '#f87171', bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.3)' },
+  medium: { color: '#fb923c', bg: 'rgba(251,146,60,0.12)',  border: 'rgba(251,146,60,0.3)'  },
+  low:    { color: '#4ade80', bg: 'rgba(74,222,128,0.12)',  border: 'rgba(74,222,128,0.3)'  },
+  normal: { color: '#4ade80', bg: 'rgba(74,222,128,0.12)',  border: 'rgba(74,222,128,0.3)'  },
+};
+
+const REPORT_SECTIONS = [
+  { key: 'executive_summary',       title: '경영 요약'      },
+  { key: 'financial_change_summary', title: '재무 변동 요약' },
+  { key: 'related_news_summary',    title: '관련 뉴스 요약' },
+  { key: 'possible_causes',         title: '변동 가능 원인' },
+  { key: 'interview_point',         title: '인터뷰 포인트'  },
+  { key: 'limitations',             title: '분석의 한계'    },
+];
+
+/* ── AI 출력 형식 렌더러 ─────────────────────────────── */
+function AIReportView({ reportData }) {
+  const report      = reportData.report;
+  const summary     = reportData.summary     ?? {};
+  const companyInfo = reportData.company_info ?? {};
+  const metadata    = reportData.metadata    ?? {};
+  const riskLevel   = summary.overall_risk_level ?? 'normal';
+  const riskStyle   = RISK_COLOR[riskLevel] ?? RISK_COLOR.normal;
 
   return (
-    <div className="dc-report r-card">
-      <div className="dc-report-header">
-        <span className="dc-report-corp">{d.title}</span>
-        <span className="dc-report-date">{d.date}</span>
+    <div>
+      {/* 헤더 카드: 기업명 + 리스크 등급 + 한줄 요약 */}
+      <div className="na-card dc-header-card">
+        <div className="dc-header-top">
+          <span className="dc-company-name">{companyInfo.company_name ?? '-'}</span>
+          <span
+            className="dc-risk-badge"
+            style={{ color: riskStyle.color, background: riskStyle.bg, border: `1px solid ${riskStyle.border}` }}
+          >
+            {RISK_LABEL[riskLevel] ?? riskLevel}
+          </span>
+        </div>
+        {summary.one_line_summary && (
+          <p className="dc-one-liner">{summary.one_line_summary}</p>
+        )}
+        {summary.key_findings?.length > 0 && (
+          <ul className="dc-findings-list">
+            {summary.key_findings.map((f, i) => (
+              <li key={i} className="dc-finding-item">{f}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      {d.sections.map(sec => (
-        <div key={sec.id} className="dc-section">
-          <h3 className="dc-section-title">
+      {/* 리포트 섹션 카드들 */}
+      {REPORT_SECTIONS.map(({ key, title }) => {
+        const content = report[key];
+        if (!content) return null;
+        return (
+          <div key={key} className="na-card dc-section-card">
+            <h3 className="na-card-title">{title}</h3>
+            <p className="dc-section-content">{content}</p>
+          </div>
+        );
+      })}
+
+      {/* 메타데이터 */}
+      {(metadata.source_count || metadata.generated_at) && (
+        <div className="dc-meta-row">
+          {metadata.source_count > 0 && (
+            <span className="dc-meta-item">뉴스 {metadata.source_count}건 참조</span>
+          )}
+          {metadata.model && (
+            <span className="dc-meta-item">{metadata.model}</span>
+          )}
+          {metadata.generated_at && (
+            <span className="dc-meta-item">
+              생성: {metadata.generated_at.slice(0, 10)}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── 구형 { title, sections, warnings } 형식 렌더러 ─── */
+function LegacyReportView({ d }) {
+  return (
+    <div className="na-card">
+      <div className="dc-legacy-header">
+        <span className="dc-company-name">{d.title}</span>
+        {d.date && <span className="dc-meta-item">{d.date}</span>}
+      </div>
+
+      {d.sections?.map((sec) => (
+        <div key={sec.id} className="dc-section-card" style={{ marginTop: 12 }}>
+          <h3 className="na-card-title">
             <span className="dc-section-num">{sec.id}.</span>
             {sec.title}
           </h3>
@@ -41,12 +115,9 @@ export default function CompDisclosure({ reportData }) {
         </div>
       ))}
 
-      {/* TODO: 위험 관련 데이터가 있을 때 별도로 기재가 필요한가..?  */}
-      {d.warnings && d.warnings.length > 0 && (
-        <div className="dc-warnings">
-          <h3 className="dc-section-title dc-warnings-title">
-            위험 경보(Warning Signals) 감지
-          </h3>
+      {d.warnings?.length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <h3 className="na-card-title dc-warnings-title">위험 경보(Warning Signals) 감지</h3>
           <div className="dc-warnings-list">
             {d.warnings.map((w, i) => (
               <div key={i} className={`dc-warning-item dc-warning-${w.level}`}>
@@ -57,6 +128,27 @@ export default function CompDisclosure({ reportData }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── 메인 컴포넌트 ───────────────────────────────────── */
+export default function CompDisclosure({ reportData }) {
+  // AI 출력 형식 (report 필드 존재 여부로 판단)
+  if (reportData?.report) {
+    return <AIReportView reportData={reportData} />;
+  }
+
+  // 구형 형식 fallback
+  if (reportData?.sections) {
+    return <LegacyReportView d={reportData} />;
+  }
+
+  return (
+    <div className="na-card">
+      <p style={{ color: 'var(--text-muted, #888)', textAlign: 'center', padding: '40px 0' }}>
+        공시 데이터가 없습니다.
+      </p>
     </div>
   );
 }

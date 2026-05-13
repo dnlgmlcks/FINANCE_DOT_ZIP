@@ -15,21 +15,21 @@ export default function Report({ reportData }) {
         </div>
       </div>
 
-      <div className="report-wrap">
+      <div className="rp-wrap">
         {/* 상단: 기본정보 + 차트 */}
-        <div className="report-top">
-          <div className="report-left-col">
-            <BasicInfo />
+        <div className="rp-top">
+          <div className="rp-left-col">
+            <BasicInfo reportData={reportData} />
             <PriceSignal />
           </div>
-          <div className="report-right-col">
-            <RevenueChart />
+          <div className="rp-right-col">
+            <RevenueChart reportData={reportData} />
           </div>
         </div>
 
-        {/* 하단: 재무제표 + 주요지표 */}
-        <div className="report-bottom">
-          <FinancialTable />
+        {/* 하단: 재무제표 */}
+        <div className="rp-bottom">
+          <FinancialTable reportData={reportData} />
         </div>
       </div>
     </div>

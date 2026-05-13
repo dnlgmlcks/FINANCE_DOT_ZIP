@@ -67,13 +67,13 @@ function App() {
         //   console.log('TEST!');
         // }, 3000);
 
-        if (!reportData || !newsData || !disclosureData) {
-            alert('일부 데이터가 누락되었습니다.');
+        // if (!reportData || !newsData || !disclosureData) {
+        //     alert('일부 데이터가 누락되었습니다.');
             
-        } else {
+        // } else {
             setSearchResult(responseData.data);
             setCompanyName(responseData.data.reportData?.company_name ?? keyword);
-        }
+        // }
 
         setLoading(false);
       },

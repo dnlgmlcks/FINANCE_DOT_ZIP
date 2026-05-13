@@ -42,11 +42,9 @@ export default function Header({ onToggleSearch, searchCollapsed }) {
     <header className="hd-header">
       <div className="hd-logo">
         <span className="hd-logo-icon"><LogoIcon /></span>
-        <span className="hd-logo-text">Finance-Context Insight</span>
+        <span className="hd-logo-text">Finance.zip</span>
       </div>
       <div className="hd-actions">
-        <button className="hd-icon-btn" title="알림"><BellIcon /></button>
-        <button className="hd-icon-btn" title="설정"><SettingsIcon /></button>
         <div className="hd-divider" />
         <button
           className="hd-icon-btn"

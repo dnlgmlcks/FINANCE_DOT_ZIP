@@ -1,284 +1,170 @@
-/* ===== Report Page Layout ===== */
-.na-card {
-  background: #1c2030;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
-}
+/* ===== Disclosure Page Layout ===== */
 
-.report-top {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  /* gap: 12px; */
-}
-
-.report-left-col {
+.dc-wrap {
   display: flex;
   flex-direction: column;
-  /* gap: 12px; */
-}
-
-.report-right-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.report-bottom {
-  width: 100%;
-}
-
-/* ===== Shared Card Style ===== */
-.r-card {
-  background: var(--bg-card, #161b27);
-  border: 1px solid var(--border, #252d3d);
-  border-radius: 8px;
-  padding: 14px;
-}
-
-.r-card-title {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted, #5a6680);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
-}
-
-/* ===== BasicInfo ===== */
-.bi-wrap {
-  composes: r-card;
-}
-
-.bi-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.bi-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border, #252d3d);
-}
-
-.bi-item:last-child {
-  border-bottom: none;
-}
-
-.bi-label {
-  font-size: 10px;
-  color: var(--text-muted, #5a6680);
-}
-
-.bi-value {
-  font-size: 11px;
-  color: var(--text-primary, #d0d8f0);
-  font-weight: 500;
-  text-align: right;
-}
-
-.bi-ticker {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent, #4f8ef7);
-  letter-spacing: 0.04em;
-}
-
-/* ===== PriceSignal ===== */
-.ps-wrap {
-  composes: r-card;
-}
-
-.ps-price-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.ps-price {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary, #d0d8f0);
-  letter-spacing: -0.02em;
-}
-
-.ps-change {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.ps-change.up {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.12);
-}
-
-.ps-change.down {
-  color: #4ecdc4;
-  background: rgba(78, 205, 196, 0.12);
-}
-
-.ps-signals {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.ps-signal-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ps-signal-label {
-  font-size: 10px;
-  color: var(--text-muted, #5a6680);
-}
-
-.ps-signal-val {
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.ps-signal-val.up   { color: #ff6b6b; }
-.ps-signal-val.down { color: #4ecdc4; }
-.ps-signal-val.neu  { color: #8899bb; }
-
-/* ===== RevenueChart ===== */
-.rc-wrap {
-  composes: r-card;
-  height: 100%;
-}
-
-.rc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.rc-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary, #8899bb);
-}
-
-.rc-legend {
-  display: flex;
   gap: 12px;
 }
 
-.rc-legend-item {
+/* ===== 헤더 카드 ===== */
+.dc-header-card {
+  /* na-card 위에 추가 스타일 없음 */
+}
+
+.dc-header-top {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.dc-company-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.dc-risk-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.dc-one-liner {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+.dc-findings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #252d3d);
+}
+
+.dc-finding-item {
+  font-size: 12px;
+  color: var(--text-h);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.dc-finding-item::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--accent, #4f8ef7);
+}
+
+/* ===== 섹션 카드 ===== */
+.dc-section-card {
+  /* na-card 위에 추가 스타일 없음 */
+}
+
+.dc-section-content {
+  font-size: 13px;
+  color: var(--text, #8899bb);
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* ===== 메타데이터 ===== */
+.dc-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 4px;
+}
+
+.dc-meta-item {
+  font-size: 11px;
   color: var(--text-muted, #5a6680);
 }
 
-.rc-legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
+/* ===== 구형 형식 (legacy) ===== */
+.dc-legacy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
-.rc-chart-area {
-  width: 100%;
-  height: 180px;
+.dc-section-num {
+  margin-right: 6px;
+  color: var(--accent, #4f8ef7);
+}
+
+.dc-section-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dc-section-item {
+  font-size: 13px;
+  color: var(--text, #8899bb);
+  line-height: 1.6;
+  padding-left: 12px;
   position: relative;
 }
 
-/* ===== FinancialTable ===== */
-.ft-wrap {
-  composes: r-card;
+.dc-section-item::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--border, #252d3d);
 }
 
-.ft-header {
+/* ===== Warning Signals (legacy) ===== */
+.dc-warnings-title {
+  margin-top: 14px;
+}
+
+.dc-warnings-list {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
 }
 
-.ft-title {
+.dc-warning-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #252d3d);
+}
+
+.dc-warning-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  background: currentColor;
+}
+
+.dc-warning-text {
   font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary, #8899bb);
+  line-height: 1.5;
 }
 
-.ft-tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--bg-input, #1a2035);
-  border-radius: 6px;
-  padding: 2px;
-}
-
-.ft-tab-btn {
-  padding: 4px 10px;
-  font-size: 10px;
-  font-weight: 500;
-  border: none;
-  background: transparent;
-  color: var(--text-muted, #5a6680);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.ft-tab-btn.active {
-  background: var(--accent, #4f8ef7);
-  color: #fff;
-}
-
-.ft-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
-}
-
-.ft-table thead th {
-  padding: 6px 10px;
-  text-align: right;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted, #5a6680);
-  border-bottom: 1px solid var(--border, #252d3d);
-}
-
-.ft-table thead th:first-child {
-  text-align: left;
-}
-
-.ft-table tbody tr {
-  transition: background 0.1s;
-}
-
-.ft-table tbody tr:hover {
-  background: rgba(79, 142, 247, 0.05);
-}
-
-.ft-table tbody td {
-  padding: 7px 10px;
-  text-align: right;
-  color: var(--text-primary, #d0d8f0);
-  border-bottom: 1px solid rgba(37, 45, 61, 0.5);
-}
-
-.ft-table tbody td:first-child {
-  text-align: left;
-  color: var(--text-secondary, #8899bb);
-  font-weight: 500;
-}
-
-.ft-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.ft-val-up   { color: #ff6b6b !important; }
-.ft-val-down { color: #4ecdc4 !important; }
+.dc-warning-high   { color: #f87171; background: rgba(248,113,113,0.08); }
+.dc-warning-medium { color: #fb923c; background: rgba(251,146,60,0.08);  }
+.dc-warning-low    { color: #4ade80; background: rgba(74,222,128,0.08);  }
