@@ -1,39 +1,65 @@
-/**
- * FinancialTable.jsx
- * 재무제표 / 주요 지표(비율) 테이블 (하단 전체)
- * - 탭: 재무제표 | 주요 지표(비율)
- * - props: financialData, ratioData (optional)
- */
 import { useState } from 'react';
 
-/* ── 재무제표 mock ─────────────────────────────── */
-export const MOCK_FINANCIAL = {
-  years: ['2020', '2021', '2022', '2023', '2024'],
-  rows: [
-    { label: '매출액(억)',    values: ['2,368', '2,796', '3,022', '2,589', '3,009'], dir: [0,0,0,0,0] },
-    { label: '영업이익(억)',  values: ['359',   '516',   '433',   '65',    '327' ],  dir: [0,1,0,-1,1] },
-    { label: '당기순이익(억)',values: ['264',   '399',   '555',   '154',   '344' ],  dir: [0,1,1,-1,1] },
-    { label: '영업이익률(%)', values: ['6.87',  '7.355', '8,033', '3,355', '3,078'], dir: [0,1,1,-1,0] },
-    { label: '내러티브(억)',  values: ['23,98', '—',     '—',     '3,236', '1,075'], dir: [0,0,0,0,0] },
-  ],
-};
+const STMT_KEYS  = ['revenue', 'operating_income', 'net_income'];
+const RATIO_KEYS = ['operating_margin', 'debt_ratio', 'current_ratio'];
 
-/* ── 주요 지표 mock ────────────────────────────── */
-export const MOCK_RATIO = {
-  years: ['2020', '2021', '2022', '2023', '2024'],
-  rows: [
-    { label: 'PER',      values: ['21.3', '13.8', '9.4',  '38.2', '11.7'], dir: [0,0,0,-1,1] },
-    { label: 'PBR',      values: ['1.88', '1.76', '1.22', '1.45', '1.09'], dir: [0,0,0,0,0]  },
-    { label: 'ROE(%)',   values: ['9.2',  '13.9', '14.1', '3.9',  '10.2'], dir: [0,1,1,-1,1] },
-    { label: 'ROA(%)',   values: ['5.4',  '8.3',  '9.0',  '2.2',  '6.1'],  dir: [0,1,1,-1,1] },
-    { label: '부채비율', values: ['39.6', '42.3', '37.8', '41.2', '38.5'], dir: [0,0,0,0,0]  },
-    { label: 'EPS(원)',  values: ['3,841','5,777','8,057','2,131','4,872'], dir: [0,1,1,-1,1] },
-  ],
-};
+function fmtValue(val, unit) {
+  if (val == null) return '-';
+  if (unit === 'KRW') {
+    const eok = val / 100_000_000;
+    return eok.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + '억';
+  }
+  if (unit === '%') return `${Number(val).toFixed(1)}%`;
+  return String(val);
+}
+
+function buildTable(reportData, keys) {
+  const summary = reportData?.finance_summary;
+  const metrics = reportData?.financial_metrics ?? {};
+  if (!summary?.length) return null;
+
+  const sorted = [...summary].sort((a, b) => a.year - b.year);
+  const years  = sorted.map((s) => String(s.year));
+
+  const rows = keys
+    .filter((key) => metrics[key] || sorted.some((s) => s[key] != null))
+    .map((key) => {
+      const m     = metrics[key] ?? {};
+      const label = m.label ?? key;
+      const unit  = m.unit  ?? '';
+
+      const values = sorted.map((s) => fmtValue(s[key], unit));
+      const dir    = sorted.map((s, i) => {
+        if (i === 0) return 0;
+        const prev = sorted[i - 1][key];
+        const curr = s[key];
+        if (curr == null || prev == null) return 0;
+        return curr > prev ? 1 : curr < prev ? -1 : 0;
+      });
+
+      return { label: `${label}(${unit || '-'})`, values, dir };
+    });
+
+  // yoy_change_rate 행 추가 (분석연도 기준)
+  const yoyRow = {
+    label: 'YoY 변동률',
+    values: sorted.map((s, i) => {
+      if (i === 0) return '-';
+      const key  = keys[0];
+      const m    = metrics[key];
+      if (m && s.year === m.current_year) return `${m.yoy_change_rate > 0 ? '+' : ''}${m.yoy_change_rate.toFixed(1)}%`;
+      return '-';
+    }),
+    dir: sorted.map(() => 0),
+  };
+  rows.push(yoyRow);
+
+  return { years, rows };
+}
 
 const TABS = [
-  { id: 'financial', label: '재무제표' },
-  { id: 'ratio',     label: '주요 지표(비율)' },
+  { id: 'stmt',  label: '재무제표' },
+  { id: 'ratio', label: '주요 지표' },
 ];
 
 function dirClass(d) {
@@ -42,24 +68,23 @@ function dirClass(d) {
   return '';
 }
 
-export default function FinancialTable({
-  financialData = MOCK_FINANCIAL,
-  ratioData     = MOCK_RATIO,
-}) {
-  const [activeTab, setActiveTab] = useState('financial');
-  const data = activeTab === 'financial' ? financialData : ratioData;
+export default function FinancialTable({ reportData }) {
+  const [activeTab, setActiveTab] = useState('stmt');
+
+  const keys = activeTab === 'stmt' ? STMT_KEYS : RATIO_KEYS;
+  const data = buildTable(reportData, keys);
 
   return (
-    <div className="r-card ft-wrap">
+    <div className="na-card ft-wrap">
       <div className="ft-header">
-        <span className="ft-title">
-          {activeTab === 'financial' ? '재무제표' : '주요 지표 (비율)'}
+        <span className="na-card-title" style={{ margin: 0 }}>
+          {activeTab === 'stmt' ? '재무제표' : '주요 지표'}
         </span>
         <div className="ft-tabs">
           {TABS.map(({ id, label }) => (
             <button
               key={id}
-              className={`ft-tab-btn ${activeTab === id ? 'active' : ''}`}
+              className={`ft-tab-btn${activeTab === id ? ' active' : ''}`}
               onClick={() => setActiveTab(id)}
             >
               {label}
@@ -68,24 +93,30 @@ export default function FinancialTable({
         </div>
       </div>
 
-      <table className="ft-table">
-        <thead>
-          <tr>
-            <th>항목</th>
-            {data.years.map((y) => <th key={y}>{y}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {data.rows.map(({ label, values, dir }) => (
-            <tr key={label}>
-              <td>{label}</td>
-              {values.map((v, i) => (
-                <td key={i} className={dirClass(dir[i])}>{v}</td>
-              ))}
+      {data ? (
+        <table className="ft-table">
+          <thead>
+            <tr>
+              <th>항목</th>
+              {data.years.map((y) => <th key={y}>{y}</th>)}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.rows.map(({ label, values, dir }) => (
+              <tr key={label}>
+                <td>{label}</td>
+                {values.map((v, i) => (
+                  <td key={i} className={dirClass(dir[i])}>{v}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', padding: '20px 0' }}>
+          재무 데이터가 없습니다.
+        </p>
+      )}
     </div>
   );
 }

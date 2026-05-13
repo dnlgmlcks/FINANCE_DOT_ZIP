@@ -1,66 +1,69 @@
 /* ===== Report Page Layout ===== */
-.na-card {
-  background: #1c2030;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
+
+.rp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.report-top {
+.rp-top {
   display: grid;
   grid-template-columns: 240px 1fr;
-  /* gap: 12px; */
+  gap: 12px;
+  align-items: stretch;
 }
 
-.report-left-col {
+.rp-left-col {
   display: flex;
   flex-direction: column;
-  /* gap: 12px; */
+  gap: 12px;
 }
 
-.report-right-col {
+.rp-right-col {
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
-.report-bottom {
+.rp-bottom {
   width: 100%;
-}
-
-/* ===== Shared Card Style ===== */
-.r-card {
-  background: var(--bg-card, #161b27);
-  border: 1px solid var(--border, #252d3d);
-  border-radius: 8px;
-  padding: 14px;
-}
-
-.r-card-title {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted, #5a6680);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
 }
 
 /* ===== BasicInfo ===== */
 .bi-wrap {
-  composes: r-card;
+  /* na-card 위에 추가 스타일 없음 */
+}
+
+.bi-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.bi-title-row .na-card-title {
+  margin: 0;
+}
+
+.bi-risk-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
 }
 
 .bi-row {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .bi-item {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 3px 0;
+  padding: 4px 0;
   border-bottom: 1px solid var(--border, #252d3d);
 }
 
@@ -81,15 +84,24 @@
 }
 
 .bi-ticker {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--accent, #4f8ef7);
   letter-spacing: 0.04em;
 }
 
+.bi-summary {
+  font-size: 11px;
+  color: var(--text, #8899bb);
+  line-height: 1.5;
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #252d3d);
+}
+
 /* ===== PriceSignal ===== */
 .ps-wrap {
-  composes: r-card;
+  /* na-card 위에 추가 스타일 없음 */
 }
 
 .ps-price-row {
@@ -113,15 +125,8 @@
   border-radius: 4px;
 }
 
-.ps-change.up {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.12);
-}
-
-.ps-change.down {
-  color: #4ecdc4;
-  background: rgba(78, 205, 196, 0.12);
-}
+.ps-change.up   { color: #ff6b6b; background: rgba(255, 107, 107, 0.12); }
+.ps-change.down { color: #4ecdc4; background: rgba(78, 205, 196, 0.12);  }
 
 .ps-signals {
   display: flex;
@@ -151,8 +156,8 @@
 
 /* ===== RevenueChart ===== */
 .rc-wrap {
-  composes: r-card;
-  height: 100%;
+  flex: 1;
+  min-height: 260px;
 }
 
 .rc-header {
@@ -160,12 +165,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-}
-
-.rc-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary, #8899bb);
 }
 
 .rc-legend {
@@ -189,13 +188,13 @@
 
 .rc-chart-area {
   width: 100%;
-  height: 180px;
+  height: 200px;
   position: relative;
 }
 
 /* ===== FinancialTable ===== */
 .ft-wrap {
-  composes: r-card;
+  /* na-card 위에 추가 스타일 없음 */
 }
 
 .ft-header {
@@ -203,12 +202,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-}
-
-.ft-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary, #8899bb);
 }
 
 .ft-tabs {
@@ -251,17 +244,10 @@
   border-bottom: 1px solid var(--border, #252d3d);
 }
 
-.ft-table thead th:first-child {
-  text-align: left;
-}
+.ft-table thead th:first-child { text-align: left; }
 
-.ft-table tbody tr {
-  transition: background 0.1s;
-}
-
-.ft-table tbody tr:hover {
-  background: rgba(79, 142, 247, 0.05);
-}
+.ft-table tbody tr { transition: background 0.1s; }
+.ft-table tbody tr:hover { background: rgba(79, 142, 247, 0.05); }
 
 .ft-table tbody td {
   padding: 7px 10px;
@@ -276,9 +262,7 @@
   font-weight: 500;
 }
 
-.ft-table tbody tr:last-child td {
-  border-bottom: none;
-}
+.ft-table tbody tr:last-child td { border-bottom: none; }
 
 .ft-val-up   { color: #ff6b6b !important; }
 .ft-val-down { color: #4ecdc4 !important; }

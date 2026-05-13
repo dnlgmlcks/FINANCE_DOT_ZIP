@@ -1,51 +1,49 @@
-/**
- * BasicInfo.jsx
- * 기본 정보 카드 (상단 좌측)
- * - 종목명, 업종, 종목코드, 결산월, 날짜 등 표시
- * - props: stockData (optional) — 없으면 mock 데이터 사용
- */
-
-const MOCK = {
-  name: '삼성전자',
-  nameEn: 'Samsung Electronics',
-  exchange: 'KOSPI',
-  sector: '반도체 및 전자부품 제조',
-  industry: 'IT / 반도체',
-  code: 'C4671',
-  fiscalMonth: '12월',
-  listedDate: '1969.01.13',
+const RISK_LABEL = { high: '고위험', medium: '주의', low: '안정', normal: '안정' };
+const RISK_COLOR = {
+  high:   { color: '#f87171', bg: 'rgba(248,113,113,0.12)' },
+  medium: { color: '#fb923c', bg: 'rgba(251,146,60,0.12)'  },
+  low:    { color: '#4ade80', bg: 'rgba(74,222,128,0.12)'  },
+  normal: { color: '#4ade80', bg: 'rgba(74,222,128,0.12)'  },
 };
 
-export default function BasicInfo({ stockData = MOCK }) {
-  const {
-    name, nameEn, exchange, sector,
-    industry, code, fiscalMonth, listedDate,
-  } = stockData;
+export default function BasicInfo({ reportData }) {
+  const info     = reportData?.company_info ?? {};
+  const summary  = reportData?.summary ?? {};
+  const riskLevel = summary.overall_risk_level ?? 'normal';
+  const riskStyle = RISK_COLOR[riskLevel] ?? RISK_COLOR.normal;
 
   const rows = [
-    { label: '기업명',   value: name },
-    { label: 'English', value: nameEn },
-    { label: '거래소',   value: exchange },
-    { label: '업종',     value: sector },
-    { label: '산업',     value: industry },
-    { label: '종목코드', value: code,        highlight: true },
-    { label: '결산월',   value: fiscalMonth },
-    { label: '상장일',   value: listedDate },
+    { label: '기업명',   value: info.company_name  ?? '-' },
+    { label: '종목코드', value: info.stock_code     ?? '-', highlight: true },
+    { label: '분석연도', value: reportData?.analysis_year ? `${reportData.analysis_year}년` : '-' },
+    { label: '기준연도', value: reportData?.base_year     ? `${reportData.base_year}년`     : '-' },
+    { label: '주요발견', value: `${(summary.key_findings ?? []).length}건` },
   ];
 
   return (
-    <div className="r-card bi-wrap">
-      <p className="r-card-title">기본 정보</p>
+    <div className="na-card bi-wrap">
+      <div className="bi-title-row">
+        <p className="na-card-title">기본 정보</p>
+        {riskLevel && (
+          <span
+            className="bi-risk-badge"
+            style={{ color: riskStyle.color, background: riskStyle.bg }}
+          >
+            {RISK_LABEL[riskLevel] ?? riskLevel}
+          </span>
+        )}
+      </div>
       <div className="bi-row">
         {rows.map(({ label, value, highlight }) => (
           <div className="bi-item" key={label}>
             <span className="bi-label">{label}</span>
-            <span className={highlight ? 'bi-value bi-ticker' : 'bi-value'}>
-              {value}
-            </span>
+            <span className={highlight ? 'bi-value bi-ticker' : 'bi-value'}>{value}</span>
           </div>
         ))}
       </div>
+      {summary.one_line_summary && (
+        <p className="bi-summary">{summary.one_line_summary}</p>
+      )}
     </div>
   );
 }
