@@ -4,14 +4,15 @@ comprehensive_report_service.py
 AI 재무 분석 리포트 파이프라인을 하나로 연결하는 상위 서비스 모듈입니다.
 
 현재 연결된 흐름:
-1. sample_report_data.py 또는 Backend/Data 파트에서 ai_input을 받습니다.
+1. Backend/Data 파트 또는 sample_report_data.py에서 ai_input을 받습니다.
 2. llm_client.py에서 공통 LLM 객체를 가져옵니다.
 3. financial_context_builder.py로 재무 문맥을 생성합니다.
-4. news_query_builder.py로 뉴스 검색 query_groups를 생성합니다.
-5. news_search_service.py로 Tavily 뉴스 후보를 수집합니다.
-6. news_evidence_filter.py로 리포트 근거로 사용할 뉴스만 선별합니다.
-7. report_writer_chain.py로 최종 리포트 JSON을 생성합니다.
-8. 백엔드/프론트 연동용 최종 AI 리포트 JSON을 반환합니다.
+4. industry_analysis_rules.py로 업종별 분석 가이드를 생성합니다.
+5. news_query_builder.py로 뉴스 검색 query_groups를 생성합니다.
+6. news_search_service.py로 Tavily 뉴스 후보를 수집합니다.
+7. news_evidence_filter.py로 리포트 근거로 사용할 뉴스만 선별합니다.
+8. report_writer_chain.py로 최종 리포트 JSON을 생성합니다.
+9. 백엔드/프론트 연동용 최종 AI 리포트 JSON을 반환합니다.
 
 주의:
 - disclosure_retriever.py는 아직 구현되지 않았으므로 기본적으로 공시 RAG 검색은 수행하지 않습니다.
@@ -24,6 +25,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from src.ai.financial_context_builder import build_financial_context
+from src.ai.industry_analysis_rules import build_industry_analysis_instruction
 from src.ai.llm_client import get_llm
 from src.ai.news_evidence_filter import filter_evidence
 from src.ai.news_query_builder import build_news_queries
@@ -57,15 +59,36 @@ def get_company_info(ai_input: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "stock_code": company_info.get("stock_code", ""),
         "company_name": company_info.get("company_name", ""),
+        "induty_code": company_info.get("induty_code", ""),
     }
+
+
+def get_industry_info(ai_input: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    ai_input에서 업종 정보를 추출합니다.
+    """
+
+    return ai_input.get("industry_info", {}) or {}
 
 
 def get_detected_changes(ai_input: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
-    ai_input에서 detected_changes를 추출합니다.
+    ai_input에서 AI 리포트 생성용 detected_changes를 추출합니다.
     """
 
     return ai_input.get("detected_changes", []) or []
+
+
+def get_all_detected_changes(ai_input: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    ai_input에서 원본 전체 detected_changes를 추출합니다.
+
+    backend_payload_adapter.py v2에서는:
+    - detected_changes: AI 뉴스 검색/리포트 생성용 핵심 변동
+    - all_detected_changes: API에서 받은 전체 변동
+    """
+
+    return ai_input.get("all_detected_changes", []) or get_detected_changes(ai_input)
 
 
 def build_empty_disclosure_result() -> Dict[str, Any]:
@@ -98,23 +121,10 @@ def build_final_report_json(
     disclosure_result: Optional[Dict[str, Any]] = None,
     model_name: str = "unknown",
     include_searched_news: bool = True,
+    industry_analysis_instruction: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     각 Chain의 결과를 백엔드/프론트에서 사용하기 좋은 최종 JSON으로 조립합니다.
-
-    Args:
-        ai_input: AI 입력 데이터
-        financial_context: Financial Context Builder 결과
-        query_groups: News Query Builder 결과
-        searched_news: Tavily로 수집한 뉴스 후보 전체
-        evidence: News Evidence Filter 결과
-        report: Report Writer Chain 결과
-        disclosure_result: 공시 RAG 결과. 현재는 optional.
-        model_name: 사용 모델명
-        include_searched_news: 최종 JSON에 searched_news 전체를 포함할지 여부
-
-    Returns:
-        최종 AI 리포트 JSON
     """
 
     disclosure_result = disclosure_result or build_empty_disclosure_result()
@@ -122,25 +132,26 @@ def build_final_report_json(
     evidence_news = evidence.get("evidence_news", []) or []
     evidence_disclosures = evidence.get("evidence_disclosures", []) or []
 
-    # searched_news는 매우 길 수 있으므로 화면/API 응답에서 제외할 수 있습니다.
-    # 단, metadata에는 실제 검색된 뉴스 후보 개수를 유지합니다.
     searched_news_for_output = searched_news if include_searched_news else []
+    industry_info = get_industry_info(ai_input)
 
     return {
         "company_info": get_company_info(ai_input),
+        "industry_info": industry_info,
         "analysis_year": ai_input.get("analysis_year"),
         "base_year": ai_input.get("base_year"),
 
-        # Data/PM 파트가 넘겨준 재무 변화 감지 결과
+        # Data/PM 파트가 넘겨준 전체 신호 및 AI 검색용 핵심 변동
+        "signals": ai_input.get("signals", []) or [],
         "detected_changes": get_detected_changes(ai_input),
+        "all_detected_changes": get_all_detected_changes(ai_input),
 
         # AI 파트 중간 산출물
         "financial_context": financial_context,
         "query_groups": query_groups,
+        "industry_analysis_instruction": industry_analysis_instruction or "",
 
         # 뉴스 후보 수집 결과
-        # include_searched_news=False이면 빈 리스트로 반환됩니다.
-        # 전체 후보 뉴스는 길 수 있으므로 디버깅/검증용으로만 포함하는 것을 권장합니다.
         "searched_news": searched_news_for_output,
 
         # 리포트 근거
@@ -151,20 +162,22 @@ def build_final_report_json(
         "report": report,
 
         # 공시 RAG 관련 정보
-        # 현재는 disclosure_retriever.py 미구현 상태이므로 비어 있을 수 있습니다.
         "disclosure_result": disclosure_result,
 
         # 전체 파이프라인 메타데이터
         "metadata": {
             "model": model_name,
             "generated_at": datetime.now().isoformat(timespec="seconds"),
+            "analysis_year": ai_input.get("analysis_year"),
+            "base_year": ai_input.get("base_year"),
+            "industry_group": industry_info.get("industry_group"),
+            "industry_group_name": industry_info.get("industry_group_name"),
+            "industry_instruction_applied": bool(industry_analysis_instruction),
             "detected_change_count": len(get_detected_changes(ai_input)),
+            "all_detected_change_count": len(get_all_detected_changes(ai_input)),
             "query_group_count": len(query_groups),
-
-            # searched_news를 출력에서 제외하더라도 실제 검색 개수는 유지합니다.
             "searched_news_count": len(searched_news),
             "searched_news_included": include_searched_news,
-
             "evidence_news_count": len(evidence_news),
             "evidence_disclosure_count": len(evidence_disclosures),
             "financial_context_source": financial_context.get("source"),
@@ -173,6 +186,7 @@ def build_final_report_json(
             "disclosure_enabled": bool(
                 (disclosure_result.get("metadata", {}) or {}).get("enabled")
             ),
+            "adapter_metadata": ai_input.get("adapter_metadata", {}),
         },
     }
 
@@ -243,11 +257,18 @@ def create_ai_report(
     llm = get_llm()
     model_name = get_model_name(llm)
 
+    industry_info = get_industry_info(ai_input)
+    industry_analysis_instruction = build_industry_analysis_instruction(industry_info)
+
     # 1. 재무 문맥 생성
     financial_context = build_financial_context(
         llm=llm,
         ai_input=ai_input,
     )
+
+    # financial_context_builder.py가 industry_info를 포함하지 않는 경우에 대비해 보강합니다.
+    financial_context["industry_info"] = industry_info
+    financial_context["industry_analysis_instruction"] = industry_analysis_instruction
 
     # 2. 공시 RAG 검색
     # 현재는 disclosure_retriever.py 미구현 상태이므로 빈 결과가 반환됩니다.
@@ -288,6 +309,8 @@ def create_ai_report(
         financial_context=financial_context,
         evidence_news=evidence.get("evidence_news", []),
         evidence_disclosures=evidence.get("evidence_disclosures", []),
+        industry_info=industry_info,
+        industry_analysis_instruction=industry_analysis_instruction,
     )
 
     # 7. 최종 JSON 조립
@@ -301,6 +324,7 @@ def create_ai_report(
         disclosure_result=disclosure_result,
         model_name=model_name,
         include_searched_news=include_searched_news,
+        industry_analysis_instruction=industry_analysis_instruction,
     )
 
     return final_json
@@ -336,6 +360,10 @@ if __name__ == "__main__":
     # 현재 재무 수치는 Mock 데이터이므로 최종 발표용 샘플로 쓰기 전에는 실제 재무 데이터와 맞춰야 합니다.
     sample_ai_input["company_info"]["company_name"] = "삼성전자"
     sample_ai_input["company_info"]["stock_code"] = "005930"
+    sample_ai_input["industry_info"] = {
+        "industry_group": "tech_equipment",
+        "industry_group_name": "기술 및 장치 산업",
+    }
     sample_ai_input["analysis_year"] = 2023
     sample_ai_input["base_year"] = 2022
 
@@ -349,20 +377,19 @@ if __name__ == "__main__":
         max_results_per_query=5,
         max_total_news_results=20,
         max_evidence_news=5,
-
-        # 화면/API 응답이 너무 커지는 것을 막기 위해 기본 테스트에서는 숨깁니다.
-        # 단, metadata.searched_news_count에는 실제 검색 개수가 유지됩니다.
         include_searched_news=False,
     )
 
     print("[Comprehensive Report Service Test]")
     print("company:", result.get("company_info", {}).get("company_name"))
+    print("industry_group:", result.get("industry_info", {}).get("industry_group"))
     print("analysis_year:", result.get("analysis_year"))
     print("detected_change_count:", result.get("metadata", {}).get("detected_change_count"))
     print("searched_news_count:", result.get("metadata", {}).get("searched_news_count"))
     print("searched_news_included:", result.get("metadata", {}).get("searched_news_included"))
     print("evidence_news_count:", result.get("metadata", {}).get("evidence_news_count"))
     print("evidence_disclosure_count:", result.get("metadata", {}).get("evidence_disclosure_count"))
+    print("industry_instruction_applied:", result.get("metadata", {}).get("industry_instruction_applied"))
 
     print("\n[Final AI Report JSON]")
     print(json.dumps(result, ensure_ascii=False, indent=2))
