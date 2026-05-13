@@ -70,18 +70,22 @@ function getTime() {
 }
 
 // ── 초기 메시지 ──────────────────────────────────────
-const INITIAL_MESSAGES = [
+const getInitialMessages = (name) => [
   {
     id: 1,
     role: "assistant",
-    content: "안녕하세요! 삼성전자의 재무 분석 보고서에 대해 궁금하신 점이 있으시면 언제든지 질문해주세요.",
+    content: `안녕하세요! ${name}의 재무 분석 보고서에 대해 궁금하신 점이 있으시면 언제든지 질문해주세요.`,
     time: getTime(),
   },
 ];
 
 // ── 컴포넌트 ─────────────────────────────────────────
-export default function AIChatPanel() {
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+export default function AIChatPanel({ companyName }) {
+  const [messages, setMessages] = useState(() => getInitialMessages(companyName));
+
+  useEffect(() => {
+    setMessages(getInitialMessages(companyName));
+  }, [companyName]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const bodyRef = useRef(null);

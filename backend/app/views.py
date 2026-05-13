@@ -77,20 +77,42 @@ def search_company(request):
         keyword = str(request.data.get("keyword", "")).strip()
 
     if not keyword:
-        return fail_response(
-            message="keyword가 필요합니다.",
-            data=[]
-        )
+        return fail_response(message="keyword가 필요합니다.", data=[])
 
     result = [
         company for company in TEMP_COMPANY_DATA
         if keyword in company["CORP_NAME"] or keyword in company["TICKER"]
     ]
 
+    if not result:
+        return fail_response(message="검색 결과가 없습니다.", data=[])
+
+    matched = result[0]
+    stock_code = matched["TICKER"]
+
+    try:
+        from src.services.report_service import build_report_response
+        report_result = build_report_response(stock_code)
+    except Exception as e:
+        return fail_response(message=f"리포트 생성 오류: {str(e)}")
+
+    if report_result.get("status") == "fail":
+        return fail_response(message=report_result.get("message", "리포트 조회 실패"))
+
+    report_data = report_result.get("data", {})
+
+    news_data = {
+        "detected_changes": report_data.get("detected_changes", []) or [],
+        "evidence_news": [],
+        "signals": report_data.get("signals", []) or [],
+        "company_info": report_data.get("company_info", {}),
+    }
+
     return success_response(
         data={
-            "count": len(result),
-            "companies": result
+            "reportData": report_data,
+            "newsData": news_data,
+            "disclosureData": {"company_info": report_data.get("company_info", {})},
         },
         message="기업 검색 성공"
     )

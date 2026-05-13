@@ -10,7 +10,15 @@
 export default function CompDisclosure({ reportData }) {
   const d = reportData;
 
-  console.log(d)
+  if (!d || !d.sections) {
+    return (
+      <div className="dc-report r-card">
+        <p style={{ color: 'var(--text-muted, #888)', textAlign: 'center', padding: '40px 0' }}>
+          공시 데이터가 없습니다.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="dc-report r-card">

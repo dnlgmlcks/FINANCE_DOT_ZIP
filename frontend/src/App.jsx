@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
+import { LucideProvider } from 'lucide-react';
 import Header from './components/Header';
 import SearchBox from './components/SearchBox';
 import MainLayout from './layouts/MainLayout';
 import Report from './pages/Report';
 import NewsAnalysis from './pages/NewsAnalysis';
 import Disclosure from './pages/Disclosure';
+import HomePage from './pages/Home';
 import { BeatLoader } from 'react-spinners';
 import { gfn_transaction } from './util/common-util';
 import './index.css';
 import './App.css';
-import {SAMPLE_NORMAL_AI_INPUT, MOCK} from './mock_data';
+import { MOCK } from './mock_data';
 
 const PAGE_MAP = {
   report:      <Report />,
@@ -23,7 +25,8 @@ function App() {
   const [allCompanies, setAllCompanies]     = useState([]);
   const [filteredData, setFilteredData]     = useState([]);
   const [searchCollapsed, setSearchCollapsed] = useState(false);
-  const [searchResult, setSearchResult]     = useState(false);
+  const [searchResult, setSearchResult]     = useState(null);
+  const [companyName, setCompanyName]       = useState(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -43,8 +46,9 @@ function App() {
   const handleSearch = async (keyword) => {
     if (!keyword) { alert('검색어를 입력해주세요.'); return; }
 
-    // 내용 초기화 
+    // 내용 초기화
     setSearchResult(null);
+    setCompanyName(null);
     // 로딩바
     setLoading(true);
 
@@ -57,7 +61,7 @@ function App() {
       pCall:  (svcId, responseData, errCd, msgTp, msgCd, msgText) => {
 
         // 데이터 체크
-        const { reportData, newsData, disclosureData } = responseData ?? {};
+        const { reportData, newsData, disclosureData } = responseData?.data ?? {};
 
         // setTimeout(function() {
         //   console.log('TEST!');
@@ -67,7 +71,8 @@ function App() {
             alert('일부 데이터가 누락되었습니다.');
             
         } else {
-            setSearchResult(responseData);
+            setSearchResult(responseData.data);
+            setCompanyName(responseData.data.reportData?.company_name ?? keyword);
         }
 
         setLoading(false);
@@ -83,16 +88,16 @@ function App() {
   };
 
   const renderPage = () => {
+    if (!searchResult) return <HomePage />;
 
-    // searchResult 없으면 렌더링 X -> 이건 백엔드가 다 붙지 않은 상황에서 잠시 주석처리
-    // if (!searchResult) return null;
-
-    const commonProps = { reportData: SAMPLE_NORMAL_AI_INPUT , disclosureData: MOCK };
+    const reportData     = searchResult.reportData;
+    const newsData       = searchResult.newsData;
+    const disclosureData = searchResult.disclosureData ?? MOCK;
 
     switch (activeTab) {
-      case 'report':     return <Report {...commonProps} />;
-      case 'news':       return <NewsAnalysis />;
-      case 'disclosure': return <Disclosure {...commonProps} />;
+      case 'report':     return <Report reportData={reportData} disclosureData={disclosureData} />;
+      case 'news':       return <NewsAnalysis newsData={newsData} />;
+      case 'disclosure': return <Disclosure reportData={reportData} disclosureData={disclosureData} />;
     }
   };
 
@@ -106,7 +111,7 @@ function App() {
   };
 
   return (
-    <>
+    <LucideProvider>
       <Header onToggleSearch={() => setSearchCollapsed(v => !v)} searchCollapsed={searchCollapsed} />
       <div className={`app-search-bar${searchCollapsed ? ' collapsed' : ''}`}>
         <SearchBox
@@ -120,10 +125,10 @@ function App() {
           <BeatLoader color="#c084fc" size={10} />
         </div>
       )}
-      <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <MainLayout activeTab={activeTab} onTabChange={setActiveTab} companyName={companyName}>
         {renderPage()}
       </MainLayout>
-    </>
+    </LucideProvider>
   );
 }
 
