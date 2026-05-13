@@ -13,7 +13,7 @@ const CHAT_MIN = 220;
 const CHAT_MAX = 600;
 const CHAT_DEFAULT = 340;
 
-export default function MainLayout({ activeTab, onTabChange, children }) {
+export default function MainLayout({ activeTab, onTabChange, children, companyName }) {
   const [chatWidth, setChatWidth] = useState(CHAT_DEFAULT);
   const dragging = useRef(false);
   const startX = useRef(0);
@@ -81,11 +81,10 @@ export default function MainLayout({ activeTab, onTabChange, children }) {
         </div>
 
         <aside className="ml-chat" style={{ width: chatWidth }}>
-          {children ? (
-              <AIChatPanel />
+          {companyName ? (
+              <AIChatPanel companyName={companyName} />
             ) : (
               <div>
-                {/* 데이터가 없는 경우 default 부분 */}
                 <div className="default-chat-wrap">
                   <Bot size={64} className="mx-auto mb-4 opacity-50" />
                   <p>기업을 검색하면 AI 어시스턴트와<br />대화를 시작할 수 있습니다</p>
@@ -93,7 +92,6 @@ export default function MainLayout({ activeTab, onTabChange, children }) {
               </div>
             )
           }
-          
         </aside>
       </div>
     </div>

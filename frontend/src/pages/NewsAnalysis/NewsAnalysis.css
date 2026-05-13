@@ -115,28 +115,35 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .na-change-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
 }
 
 .na-change-badge {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
   flex-shrink: 0;
+  min-width: 56px;
+  text-align: center;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .na-change-reason {
   font-size: 13px;
-  color: var(--text);
-  line-height: 1.5;
+  color: var(--text-h);
+  line-height: 1.55;
 }
 
 /* Signal 흐름 (NewsSummary) */
@@ -302,4 +309,14 @@
   font-size: 11px;
   color: var(--text);
   flex-shrink: 0;
+}
+
+.nso-title-link {
+  text-decoration: none;
+  color: var(--text-h);
+}
+
+.nso-title-link:hover {
+  text-decoration: underline;
+  color: var(--accent, #c084fc);
 }

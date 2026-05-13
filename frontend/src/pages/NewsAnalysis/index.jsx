@@ -3,7 +3,10 @@ import NewsSummary from './components/NewsSummary';
 import NewsSource from './components/NewsSource';
 import './NewsAnalysis.css';
 
-export default function NewsAnalysis() {
+export default function NewsAnalysis({ newsData }) {
+  const detectedChanges = newsData?.detected_changes ?? null;
+  const evidenceNews    = newsData?.evidence_news    ?? null;
+
   return (
     <div>
       {/* 페이지 헤더 */}
@@ -15,13 +18,13 @@ export default function NewsAnalysis() {
       </div>
 
       {/* 최근 이슈 + 변동 사유 (2열) */}
-      <SignalList />
+      <SignalList evidenceNews={evidenceNews} detectedChanges={detectedChanges} />
 
       {/* 주요 경영 판단 요약 (Signal 태그 흐름) */}
-      <NewsSummary />
+      <NewsSummary detectedChanges={detectedChanges} />
 
       {/* 뉴스 출처 */}
-      <NewsSource />
+      <NewsSource evidenceNews={evidenceNews} />
     </div>
   );
 }

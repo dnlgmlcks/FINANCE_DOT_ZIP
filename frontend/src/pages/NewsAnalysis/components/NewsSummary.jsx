@@ -1,5 +1,5 @@
 /* 주요 경영 판단 요약 — Signal 흐름 (카테고리 → 태그들) */
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SignalDetail from './SignalDetail';
 
 const MOCK_SIGNALS = [
@@ -51,8 +51,53 @@ const MOCK_SIGNALS = [
   },
 ];
 
-export default function NewsSummary() {
-  const [activeSignal, setActiveSignal] = useState(null); // { rowId, tagIndex, ...tagData }
+const COLOR_MAP = {
+  increase: { tagColor: '#4ade80', tagBg: 'rgba(74,222,128,0.15)' },
+  decrease_high:   { tagColor: '#f87171', tagBg: 'rgba(248,113,113,0.15)' },
+  decrease_medium: { tagColor: '#fb923c', tagBg: 'rgba(251,146,60,0.15)' },
+  decrease_low:    { tagColor: '#fbbf24', tagBg: 'rgba(251,191,36,0.12)' },
+  neutral: { tagColor: '#94a3b8', tagBg: 'rgba(148,163,184,0.12)' },
+};
+
+function getTagColors(direction, severity) {
+  if (direction === 'increase') return COLOR_MAP.increase;
+  if (direction === 'decrease') {
+    if (severity === 'high')   return COLOR_MAP.decrease_high;
+    if (severity === 'medium') return COLOR_MAP.decrease_medium;
+    if (severity === 'low')    return COLOR_MAP.decrease_low;
+    return COLOR_MAP.decrease_high;
+  }
+  return COLOR_MAP.neutral;
+}
+
+function buildSignals(detectedChanges) {
+  const groupMap = new Map();
+  detectedChanges.forEach((change) => {
+    const category = change.metric_label ?? '기타';
+    if (!groupMap.has(category)) groupMap.set(category, { category, tags: [], tagLabels: new Set() });
+    const group = groupMap.get(category);
+    const tagLabel = change.source_signal || `${category} ${change.change_type || '변화'}`;
+    if (group.tagLabels.has(tagLabel)) return;
+    group.tagLabels.add(tagLabel);
+    const { tagColor, tagBg } = getTagColors(change.direction, change.severity);
+    group.tags.push({
+      tag: tagLabel,
+      tagColor,
+      tagBg,
+      description: change.description ?? '',
+      keywords: change.search_keywords ?? [],
+    });
+  });
+  return Array.from(groupMap.values()).map(({ tagLabels, ...row }, i) => ({ id: i + 1, ...row }));
+}
+
+export default function NewsSummary({ detectedChanges }) {
+  const [activeSignal, setActiveSignal] = useState(null);
+
+  const signals = useMemo(() => {
+    if (!detectedChanges?.length) return MOCK_SIGNALS;
+    return buildSignals(detectedChanges);
+  }, [detectedChanges]);
 
   const handleTagClick = (rowId, tagIndex, tagData) => {
     if (activeSignal?.rowId === rowId && activeSignal?.tagIndex === tagIndex) {
@@ -68,7 +113,7 @@ export default function NewsSummary() {
       <p className="na-card-hint">Signal 태그를 클릭하면 상세 내용을 확인할 수 있습니다.</p>
 
       <div className="ns-list">
-        {MOCK_SIGNALS.map((row) => (
+        {signals.map((row) => (
           <div key={row.id} className="ns-row">
             {/* 카테고리 */}
             <div className="ns-flow">
