@@ -3,8 +3,13 @@ Raw JSON을 가공하여 보고서용 CSV/JSON을 생성하는 스크립트
 """
 
 import argparse
+import sys
 from pathlib import Path
-from services.financial_processor import process_financial_data
+
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(BACKEND_ROOT))
+
+from src.services.financial_processor import process_financial_data
 
 
 def main():

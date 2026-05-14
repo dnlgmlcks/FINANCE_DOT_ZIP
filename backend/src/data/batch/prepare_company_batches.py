@@ -31,10 +31,11 @@ from dotenv import load_dotenv
 
 BACKEND_SRC_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-if str(BACKEND_SRC_ROOT) not in sys.path:
-    sys.path.insert(0, str(BACKEND_SRC_ROOT))
+BACKEND_ROOT = BACKEND_SRC_ROOT.parent
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
 
-from data.batch.create_batch_templates import CSV_HEADERS, EXPORT_ROOT  # noqa: E402
+from src.data.batch.create_batch_templates import CSV_HEADERS, EXPORT_ROOT  # noqa: E402
 
 
 load_dotenv(PROJECT_ROOT / ".env")

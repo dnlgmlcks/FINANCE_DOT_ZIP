@@ -3,11 +3,9 @@ from pathlib import Path
 
 # backend/src 경로 추가
 BASE_DIR = Path(__file__).resolve().parents[1]
-SRC_DIR = BASE_DIR / "src"
+sys.path.insert(0, str(BASE_DIR))
 
-sys.path.insert(0, str(SRC_DIR))
-
-from services.report_service import build_report_response
+from src.services.report_service import build_report_response
 
 
 def test_build_report_response():

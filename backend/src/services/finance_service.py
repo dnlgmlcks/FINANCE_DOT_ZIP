@@ -1,4 +1,4 @@
-from db.queries import fetch_financials_by_stock_code
+from src.db.queries import fetch_financials_by_stock_code
 
 
 def safe_divide(numerator, denominator, percent=True):

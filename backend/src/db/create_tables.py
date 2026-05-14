@@ -3,11 +3,12 @@ import sys
 
 # src 폴더 경로 추가
 BASE_DIR = Path(__file__).resolve().parents[1]
+BACKEND_ROOT = BASE_DIR.parent
 
 # 가장 우선순위로 추가
-sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(BACKEND_ROOT))
 
-from db.connection import get_connection
+from src.db.connection import get_connection
 
 
 def create_tables():

@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BASE_DIR))
 
-from db.connection import get_connection
+from src.db.connection import get_connection
 
 
 def check_data():

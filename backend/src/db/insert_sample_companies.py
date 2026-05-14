@@ -2,9 +2,10 @@ import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(BASE_DIR))
+BACKEND_ROOT = BASE_DIR.parent
+sys.path.insert(0, str(BACKEND_ROOT))
 
-from db.connection import get_connection
+from src.db.connection import get_connection
 
 
 def insert_sample_companies():

@@ -2,12 +2,13 @@ import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(BASE_DIR))
+BACKEND_ROOT = BASE_DIR.parent
+sys.path.insert(0, str(BACKEND_ROOT))
 
 from fastapi import APIRouter
 
-from services.report_service import build_report_response
-from db.queries import search_companies
+from src.services.report_service import build_report_response
+from src.db.queries import search_companies
 
 router = APIRouter()
 
