@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import "./AIChatPanel.css";
 
 // ── 아이콘 ──────────────────────────────────────────
@@ -48,18 +49,7 @@ function TypingBubble() {
   );
 }
 
-// ── 목업 응답 (LLM 연동 전 임시) ─────────────────────
-const MOCK_RESPONSES = [
-  "삼성전자의 최근 실적을 보면 반도체 부문 회복세가 뚜렷합니다. 다만 환율과 글로벌 수요 불확실성은 여전히 변수로 작용하고 있습니다.",
-  "현재 PBR 기준으로 역사적 저점 구간에 있어 밸류에이션 매력은 있습니다. 장기 투자자라면 긍정적으로 볼 수 있는 구간입니다.",
-  "HBM 시장 점유율 확대와 함께 AI 인프라 수요 증가가 실적 개선의 핵심 동인이 될 전망입니다.",
-  "배당 수익률과 자사주 매입 등 주주환원 정책도 최근 강화되는 추세입니다. 재무 안정성 측면에서는 긍정적입니다.",
-  "단기적으로는 메모리 가격 사이클과 중국 수출 규제 이슈가 리스크 요인입니다. 포트폴리오 비중 조절이 필요할 수 있습니다.",
-];
-
 // ── 유틸 ─────────────────────────────────────────────
-let mockIndex = 0;
-
 function getTime() {
   const now = new Date();
   const h = now.getHours();
@@ -80,16 +70,44 @@ const getInitialMessages = (name) => [
 ];
 
 // ── 컴포넌트 ─────────────────────────────────────────
-export default function AIChatPanel({ companyName }) {
+export default function AIChatPanel({ companyName, stockCode }) {
   const [messages, setMessages] = useState(() => getInitialMessages(companyName));
-
-  useEffect(() => {
-    setMessages(getInitialMessages(companyName));
-  }, [companyName]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [aiReportResult, setAiReportResult] = useState(null);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const bodyRef = useRef(null);
   const inputRef = useRef(null);
+  const typewriterRef = useRef(null);
+
+  // 타이핑 인터벌 정리
+  useEffect(() => {
+    return () => {
+      if (typewriterRef.current) clearInterval(typewriterRef.current);
+    };
+  }, []);
+
+  // 회사가 바뀌면 메시지 초기화 + AI 리포트 생성
+  useEffect(() => {
+    if (typewriterRef.current) clearInterval(typewriterRef.current);
+    setIsAnimating(false);
+    setMessages(getInitialMessages(companyName));
+    setAiReportResult(null);
+
+    if (!stockCode) return;
+
+    setReportLoading(true);
+    axios
+      .post(`/api/v1/report/comprehensive/${stockCode}/ai`, { use_mock_disclosures: true })
+      .then((res) => {
+        if (res.data?.status === "success") {
+          setAiReportResult(res.data.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setReportLoading(false));
+  }, [companyName, stockCode]);
 
   // 새 메시지 올 때마다 스크롤 하단 이동
   useEffect(() => {
@@ -98,9 +116,9 @@ export default function AIChatPanel({ companyName }) {
     }
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = inputValue.trim();
-    if (!text || isTyping) return;
+    if (!text || isTyping || isAnimating) return;
 
     const userMsg = {
       id: Date.now(),
@@ -113,20 +131,59 @@ export default function AIChatPanel({ companyName }) {
     setInputValue("");
     setIsTyping(true);
 
-    // TODO: 여기를 실제 LLM API 호출로 교체
-    const delay = 900 + Math.random() * 700;
-    setTimeout(() => {
-      const botMsg = {
-        id: Date.now() + 1,
-        role: "assistant",
-        content: MOCK_RESPONSES[mockIndex % MOCK_RESPONSES.length],
-        time: getTime(),
-      };
-      mockIndex++;
+    try {
+      const body = { question: text, use_mock_disclosures: true };
+      if (aiReportResult) {
+        body.ai_report_result = aiReportResult;
+      } else {
+        body.allow_generate_report = true;
+      }
+
+      const res = await axios.post(
+        `/api/v1/report/comprehensive/${stockCode}/chat`,
+        body
+      );
+
+      const answer =
+        res.data?.data?.answer ||
+        res.data?.message ||
+        "답변을 가져오지 못했습니다.";
+
+      const botMsgId = Date.now() + 1;
+      const msgTime = getTime();
+
       setIsTyping(false);
-      setMessages((prev) => [...prev, botMsg]);
+      setMessages((prev) => [
+        ...prev,
+        { id: botMsgId, role: "assistant", content: "", time: msgTime },
+      ]);
+
+      let charIndex = 0;
+      setIsAnimating(true);
+      typewriterRef.current = setInterval(() => {
+        charIndex = Math.min(charIndex + 4, answer.length);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === botMsgId ? { ...m, content: answer.slice(0, charIndex) } : m
+          )
+        );
+        if (charIndex >= answer.length) {
+          clearInterval(typewriterRef.current);
+          typewriterRef.current = null;
+          setIsAnimating(false);
+          inputRef.current?.focus();
+        }
+      }, 18);
+    } catch (err) {
+      const errMsg =
+        err.response?.data?.message || "오류가 발생했습니다. 다시 시도해주세요.";
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, role: "assistant", content: errMsg, time: getTime() },
+      ]);
       inputRef.current?.focus();
-    }, delay);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -144,6 +201,9 @@ export default function AIChatPanel({ companyName }) {
           <div className="acp-bot-icon"><BotIcon /></div>
           <span className="acp-header-title">AI 분석 어시스턴트</span>
         </div>
+        {reportLoading && (
+          <span className="acp-report-loading">리포트 준비 중...</span>
+        )}
       </div>
 
       {/* 메시지 목록 */}
@@ -172,17 +232,17 @@ export default function AIChatPanel({ companyName }) {
           <input
             ref={inputRef}
             className="acp-input"
-            placeholder="보고서에 대해 질문해보세요..."
+            placeholder={reportLoading ? "리포트 준비 중..." : "보고서에 대해 질문해보세요..."}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={isTyping}
+            disabled={isTyping || isAnimating || reportLoading}
             maxLength={300}
           />
           <button
             className="acp-send-btn"
             onClick={handleSend}
-            disabled={isTyping || !inputValue.trim()}
+            disabled={isTyping || isAnimating || reportLoading || !inputValue.trim()}
           >
             <SendIcon />
           </button>

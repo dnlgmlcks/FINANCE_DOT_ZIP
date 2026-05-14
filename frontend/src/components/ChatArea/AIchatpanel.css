@@ -47,6 +47,18 @@
   color: #e4e7f5;
 }
 
+.acp-report-loading {
+  font-size: 11px;
+  color: #7b9fff;
+  opacity: 0.8;
+  animation: acp-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes acp-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 /* 바디 */
 .acp-body {
   flex: 1;
