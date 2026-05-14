@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+from backend.src.db.queries import search_companies
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -401,14 +402,21 @@ def search_company(request):
     if not keyword:
         return fail_response(message="keyword가 필요합니다.", data=[])
 
-    result = [
-        company for company in TEMP_COMPANY_DATA
-        if keyword in company["CORP_NAME"] or keyword in company["TICKER"]
-    ]
+    # 기존 목업 데이터 수정처리
+    # result = [
+    #     company for company in TEMP_COMPANY_DATA
+    #     if keyword in company["CORP_NAME"] or keyword in company["TICKER"]
+    # ]
+
+    # DB에서 검색 결과 가져오기
+    result = search_companies(keyword)
 
     if not result:
         return fail_response(message="검색 결과가 없습니다.", data=[])
 
+    if len(result) > 1:
+        return fail_response(message="검색 결과가 여러 개입니다. 더 구체적으로 검색해주세요.", data=result)
+    
     matched = result[0]
     stock_code = matched["TICKER"]
 

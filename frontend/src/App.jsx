@@ -27,6 +27,8 @@ function App() {
   const [searchCollapsed, setSearchCollapsed] = useState(false);
   const [searchResult, setSearchResult]     = useState(null);
   const [companyName, setCompanyName]       = useState(null);
+  const [stockCode, setStockCode]           = useState(null);
+  const [reportData, setReportData]         = useState(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -49,6 +51,7 @@ function App() {
     // 내용 초기화
     setSearchResult(null);
     setCompanyName(null);
+    setStockCode(null);
     // 로딩바
     setLoading(true);
 
@@ -60,20 +63,24 @@ function App() {
       method: 'POST',
       pCall:  (svcId, responseData, errCd, msgTp, msgCd, msgText) => {
 
+
+        if(responseData.data.status === 'Fail') {
+          alert(responseData.data.message);
+          setLoading(false);
+          return;
+        }
         // 데이터 체크
         const { reportData, newsData, disclosureData } = responseData?.data ?? {};
 
-        // setTimeout(function() {
-        //   console.log('TEST!');
-        // }, 3000);
-
-        // if (!reportData || !newsData || !disclosureData) {
-        //     alert('일부 데이터가 누락되었습니다.');
+        if (!reportData || !newsData || !disclosureData) {
+            alert('일부 데이터가 누락되었습니다.');
             
-        // } else {
+        } else {
             setSearchResult(responseData.data);
             setCompanyName(responseData.data.reportData?.company_name ?? keyword);
-        // }
+            setStockCode(responseData.data.reportData?.company_info?.stock_code ?? null);
+            setReportData(responseData.data.reportData);
+        }
 
         setLoading(false);
       },
@@ -125,7 +132,7 @@ function App() {
           <BeatLoader color="#c084fc" size={10} />
         </div>
       )}
-      <MainLayout activeTab={activeTab} onTabChange={setActiveTab} companyName={companyName}>
+      <MainLayout activeTab={activeTab} onTabChange={setActiveTab} companyName={companyName} stockCode={stockCode}>
         {renderPage()}
       </MainLayout>
     </LucideProvider>

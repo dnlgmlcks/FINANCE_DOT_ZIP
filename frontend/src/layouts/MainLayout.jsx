@@ -13,7 +13,7 @@ const CHAT_MIN = 220;
 const CHAT_MAX = 600;
 const CHAT_DEFAULT = 340;
 
-export default function MainLayout({ activeTab, onTabChange, children, companyName }) {
+export default function MainLayout({ activeTab, onTabChange, children, companyName, stockCode }) {
   const [chatWidth, setChatWidth] = useState(CHAT_DEFAULT);
   const dragging = useRef(false);
   const startX = useRef(0);
@@ -82,7 +82,7 @@ export default function MainLayout({ activeTab, onTabChange, children, companyNa
 
         <aside className="ml-chat" style={{ width: chatWidth }}>
           {companyName ? (
-              <AIChatPanel companyName={companyName} />
+              <AIChatPanel companyName={companyName} stockCode={stockCode} />
             ) : (
               <div>
                 <div className="default-chat-wrap">
