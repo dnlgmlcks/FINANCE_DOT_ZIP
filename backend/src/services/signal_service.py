@@ -24,187 +24,204 @@ def make_signal(
     }
 
 
-def add_common_negative_signals(signals, item, previous_item, rules):
-    year = item["year"]
+def safe_number(value):
+    try:
+        if value is None:
+            return None
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def get_recent_items(finance_summary, current_index, count):
+    start = max(0, current_index - count + 1)
+    return finance_summary[start: current_index + 1]
+
+
+def all_values_present(items, key):
+    return all(item.get(key) is not None for item in items)
+
+
+def is_operating_loss_3y(items):
+    if len(items) < 3 or not all_values_present(items, "operating_income"):
+        return False
+
+    return all(safe_number(item.get("operating_income")) < 0 for item in items)
+
+
+def is_interest_coverage_low_3y(items, threshold=1):
+    if len(items) < 3 or not all_values_present(items, "interest_coverage_ratio"):
+        return False
+
+    return all(
+        safe_number(item.get("interest_coverage_ratio")) < threshold
+        for item in items
+    )
+
+
+def is_cash_flow_negative_3y(items):
+    if len(items) < 3 or not all_values_present(items, "operating_cash_flow"):
+        return False
+
+    return all(
+        safe_number(item.get("operating_cash_flow")) < 0
+        for item in items
+    )
+
+
+def is_operating_loss_widening_3y(items):
+    if len(items) < 3 or not all_values_present(items, "operating_income"):
+        return False
+
+    values = [safe_number(item.get("operating_income")) for item in items]
+
+    return (
+        values[0] < 0
+        and values[1] < 0
+        and values[2] < 0
+        and abs(values[0]) < abs(values[1]) < abs(values[2])
+    )
+
+
+def add_common_negative_signals(signals, item, recent_3_items, rules):
+    year = item.get("year")
     negative_rules = rules["negative"]
 
-    debt_ratio = item.get("debt_ratio")
-    if debt_ratio is not None and debt_ratio > negative_rules["debt_ratio_high"]["threshold"]:
-        rule = negative_rules["debt_ratio_high"]
-        signals.append(make_signal(
-            year,
-            "negative",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="DEBT_RATIO_HIGH",
-            metric_key="debt_ratio",
-        ))
-
-    operating_margin = item.get("operating_margin")
-    if operating_margin is not None and operating_margin < negative_rules["operating_margin_negative"]["threshold"]:
-        rule = negative_rules["operating_margin_negative"]
-        signals.append(make_signal(
-            year,
-            "negative",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="OPERATING_MARGIN_NEGATIVE",
-            metric_key="operating_margin",
-        ))
-
-    net_income = item.get("net_income")
-    if net_income is not None and net_income < negative_rules["net_income_negative"]["threshold"]:
-        rule = negative_rules["net_income_negative"]
-        signals.append(make_signal(
-            year,
-            "negative",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="NET_INCOME_NEGATIVE",
-            metric_key="net_income",
-        ))
-
-    current_ratio = item.get("current_ratio")
-    if current_ratio is not None and current_ratio < negative_rules["current_ratio_low"]["threshold"]:
-        rule = negative_rules["current_ratio_low"]
-        signals.append(make_signal(
-            year,
-            "negative",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="CURRENT_RATIO_LOW",
-            metric_key="current_ratio",
-        ))
-
-    interest_coverage_ratio = item.get("interest_coverage_ratio")
+    revenue_yoy = safe_number(item.get("revenue_yoy"))
     if (
-        interest_coverage_ratio is not None
-        and interest_coverage_ratio < negative_rules["interest_coverage_low"]["threshold"]
+        revenue_yoy is not None
+        and revenue_yoy <= negative_rules["revenue_drop_50"]["threshold"]
     ):
-        rule = negative_rules["interest_coverage_low"]
-        signals.append(make_signal(
-            year,
-            "negative",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="INTEREST_COVERAGE_LOW",
-            metric_key="interest_coverage_ratio",
-        ))
-
-    revenue_yoy = item.get("revenue_yoy")
-    if revenue_yoy is not None and revenue_yoy <= negative_rules["revenue_drop"]["threshold"]:
-        rule = negative_rules["revenue_drop"]
+        rule = negative_rules["revenue_drop_50"]
         signals.append(make_signal(
             year,
             "negative",
             rule["severity"],
             rule["signal"],
             rule["description_template"].format(value=revenue_yoy),
-            signal_code="REVENUE_DROP",
+            signal_code="REVENUE_DROP_50",
             metric_key="revenue",
         ))
 
-    operating_income_yoy = item.get("operating_income_yoy")
-    if operating_income_yoy is not None:
-        if operating_income_yoy <= negative_rules["operating_income_drop_high"]["threshold"]:
-            rule = negative_rules["operating_income_drop_high"]
-            signals.append(make_signal(
-                year,
-                "negative",
-                rule["severity"],
-                rule["signal"],
-                rule["description_template"].format(value=operating_income_yoy),
-                signal_code="OPERATING_INCOME_DROP_HIGH",
-                metric_key="operating_income",
-            ))
-        elif operating_income_yoy <= negative_rules["operating_income_drop_medium"]["threshold"]:
-            rule = negative_rules["operating_income_drop_medium"]
-            signals.append(make_signal(
-                year,
-                "negative",
-                rule["severity"],
-                rule["signal"],
-                rule["description_template"].format(value=operating_income_yoy),
-                signal_code="OPERATING_INCOME_DROP_MEDIUM",
-                metric_key="operating_income",
-            ))
-
-    debt_ratio_change = item.get("debt_ratio_change")
-    if debt_ratio_change is not None and debt_ratio_change >= 30:
+    if is_operating_loss_3y(recent_3_items):
+        rule = negative_rules["operating_loss_3y"]
         signals.append(make_signal(
             year,
             "negative",
-            "MEDIUM",
-            "부채비율 급증",
-            f"전년 대비 부채비율이 {debt_ratio_change}%p 증가했습니다.",
-            signal_code="DEBT_RATIO_INCREASE",
+            rule["severity"],
+            rule["signal"],
+            rule["description"],
+            signal_code="OPERATING_LOSS_3Y",
+            metric_key="operating_income",
+        ))
+
+    if is_interest_coverage_low_3y(
+        recent_3_items,
+        negative_rules["interest_coverage_3y_low"]["threshold"],
+    ):
+        rule = negative_rules["interest_coverage_3y_low"]
+        signals.append(make_signal(
+            year,
+            "negative",
+            rule["severity"],
+            rule["signal"],
+            rule["description"],
+            signal_code="INTEREST_COVERAGE_3Y_LOW",
+            metric_key="interest_coverage_ratio",
+        ))
+
+    if is_cash_flow_negative_3y(recent_3_items):
+        rule = negative_rules["cash_flow_negative_3y"]
+        signals.append(make_signal(
+            year,
+            "negative",
+            rule["severity"],
+            rule["signal"],
+            rule["description"],
+            signal_code="CASH_FLOW_NEGATIVE_3Y",
+            metric_key="operating_cash_flow",
+        ))
+
+    cash = safe_number(item.get("cash"))
+    short_term_borrowings = safe_number(item.get("short_term_borrowings"))
+    if (
+        cash is not None
+        and short_term_borrowings is not None
+        and short_term_borrowings > 0
+        and cash < short_term_borrowings
+    ):
+        rule = negative_rules["cash_less_than_short_borrowings"]
+        signals.append(make_signal(
+            year,
+            "negative",
+            rule["severity"],
+            rule["signal"],
+            rule["description"],
+            signal_code="CASH_LESS_THAN_SHORT_BORROWINGS",
+            metric_key="cash",
+        ))
+
+    debt_ratio = safe_number(item.get("debt_ratio"))
+    if (
+        debt_ratio is not None
+        and debt_ratio > negative_rules["debt_ratio_over_400"]["threshold"]
+    ):
+        rule = negative_rules["debt_ratio_over_400"]
+        signals.append(make_signal(
+            year,
+            "negative",
+            rule["severity"],
+            rule["signal"],
+            rule["description"],
+            signal_code="DEBT_RATIO_OVER_400",
             metric_key="debt_ratio",
         ))
 
-    receivables_turnover_yoy = item.get("receivables_turnover_yoy")
-    if (
-        receivables_turnover_yoy is not None
-        and receivables_turnover_yoy <= negative_rules["receivables_turnover_drop"]["threshold"]
-    ):
-        rule = negative_rules["receivables_turnover_drop"]
+    total_equity = safe_number(item.get("total_equity"))
+    capital_stock = safe_number(
+        item.get("capital_stock")
+        or item.get("capital")
+        or item.get("common_stock")
+    )
+
+    if total_equity is not None and total_equity < 0:
+        rule = negative_rules["full_capital_impairment"]
         signals.append(make_signal(
             year,
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=receivables_turnover_yoy),
-            signal_code="RECEIVABLES_TURNOVER_DROP",
-            metric_key="receivables_turnover",
+            rule["description"],
+            signal_code="CAPITAL_IMPAIRMENT_FULL",
+            metric_key="total_equity",
         ))
 
-    inventory_turnover_yoy = item.get("inventory_turnover_yoy")
-    if (
-        inventory_turnover_yoy is not None
-        and inventory_turnover_yoy <= negative_rules["inventory_turnover_drop"]["threshold"]
+    elif (
+        total_equity is not None
+        and capital_stock is not None
+        and total_equity < capital_stock
     ):
-        rule = negative_rules["inventory_turnover_drop"]
+        rule = negative_rules["partial_capital_impairment"]
         signals.append(make_signal(
             year,
             "negative",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=inventory_turnover_yoy),
-            signal_code="INVENTORY_TURNOVER_DROP",
-            metric_key="inventory_turnover",
+            rule["description"],
+            signal_code="CAPITAL_IMPAIRMENT_PARTIAL",
+            metric_key="total_equity",
         ))
 
-    if previous_item:
-        previous_operating_income = previous_item.get("operating_income")
-        current_operating_income = item.get("operating_income")
 
-        if (
-            previous_operating_income is not None
-            and current_operating_income is not None
-            and previous_operating_income > 0
-            and current_operating_income < 0
-        ):
-            signals.append(make_signal(
-                year,
-                "negative",
-                "HIGH",
-                "영업이익 적자 전환",
-                "전년도 흑자였던 영업이익이 당해 연도 적자로 전환되었습니다.",
-                signal_code="OPERATING_INCOME_TURN_TO_LOSS",
-                metric_key="operating_income",
-            ))
-
-
-def add_common_positive_signals(signals, item, previous_item, rules):
-    year = item["year"]
+def add_common_positive_signals(signals, item, previous_item, recent_3_items, rules):
+    year = item.get("year")
     positive_rules = rules["positive"]
 
-    revenue_yoy = item.get("revenue_yoy")
-    if revenue_yoy is not None and revenue_yoy >= positive_rules["revenue_jump"]["threshold"]:
+    revenue_yoy = safe_number(item.get("revenue_yoy"))
+    if (
+        revenue_yoy is not None
+        and revenue_yoy >= positive_rules["revenue_jump"]["threshold"]
+    ):
         rule = positive_rules["revenue_jump"]
         signals.append(make_signal(
             year,
@@ -216,20 +233,7 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             metric_key="revenue",
         ))
 
-    net_income_yoy = item.get("net_income_yoy")
-    if net_income_yoy is not None and net_income_yoy >= positive_rules["net_income_growth"]["threshold"]:
-        rule = positive_rules["net_income_growth"]
-        signals.append(make_signal(
-            year,
-            "positive",
-            rule["severity"],
-            rule["signal"],
-            rule["description_template"].format(value=net_income_yoy),
-            signal_code="NET_INCOME_GROWTH",
-            metric_key="net_income",
-        ))
-
-    operating_income_yoy = item.get("operating_income_yoy")
+    operating_income_yoy = safe_number(item.get("operating_income_yoy"))
     if (
         operating_income_yoy is not None
         and operating_income_yoy >= positive_rules["earnings_surprise"]["threshold"]
@@ -245,41 +249,58 @@ def add_common_positive_signals(signals, item, previous_item, rules):
             metric_key="operating_income",
         ))
 
-    total_assets = item.get("total_assets")
-    revenue = item.get("revenue")
+    if previous_item:
+        previous_operating_income = safe_number(previous_item.get("operating_income"))
+        current_operating_income = safe_number(item.get("operating_income"))
 
-    if (
-        total_assets is not None
-        and revenue is not None
-        and total_assets > 0
-    ):
-        asset_turnover = revenue / total_assets
-
-        if asset_turnover >= 0.7:
-            rule = positive_rules["asset_efficiency_up"]
+        if (
+            previous_operating_income is not None
+            and current_operating_income is not None
+            and previous_operating_income < 0
+            and current_operating_income > 0
+        ):
+            rule = positive_rules["turnaround"]
             signals.append(make_signal(
                 year,
                 "positive",
                 rule["severity"],
                 rule["signal"],
-                rule["description_template"],
-                signal_code="ASSET_EFFICIENCY_UP",
-                metric_key="asset_turnover",
+                rule["description"],
+                signal_code="OPERATING_INCOME_TURN_TO_PROFIT",
+                metric_key="operating_income",
             ))
 
+    receivables_turnover_yoy = safe_number(item.get("receivables_turnover_yoy"))
+    inventory_turnover_yoy = safe_number(item.get("inventory_turnover_yoy"))
+
+    if (
+        receivables_turnover_yoy is not None
+        and receivables_turnover_yoy >= positive_rules["asset_efficiency_up"]["threshold"]
+    ) or (
+        inventory_turnover_yoy is not None
+        and inventory_turnover_yoy >= positive_rules["asset_efficiency_up"]["threshold"]
+    ):
+        rule = positive_rules["asset_efficiency_up"]
+        signals.append(make_signal(
+            year,
+            "positive",
+            rule["severity"],
+            rule["signal"],
+            rule["description_template"],
+            signal_code="ASSET_EFFICIENCY_UP",
+            metric_key="asset_turnover",
+        ))
+
     if previous_item:
-        previous_assets = previous_item.get("total_assets")
-        current_assets = item.get("total_assets")
+        previous_assets = safe_number(previous_item.get("total_assets"))
+        current_assets = safe_number(item.get("total_assets"))
 
         if (
             previous_assets is not None
             and current_assets is not None
             and previous_assets > 0
         ):
-            asset_growth = (
-                (current_assets - previous_assets)
-                / previous_assets
-            ) * 100
+            asset_growth = ((current_assets - previous_assets) / previous_assets) * 100
 
             if asset_growth >= positive_rules["capacity_expansion"]["threshold"]:
                 rule = positive_rules["capacity_expansion"]
@@ -293,150 +314,201 @@ def add_common_positive_signals(signals, item, previous_item, rules):
                     metric_key="total_assets",
                 ))
 
-    equity_ratio_change = item.get("equity_ratio_change")
-    if equity_ratio_change is not None and equity_ratio_change >= positive_rules["equity_ratio_improve"]["threshold"]:
-        rule = positive_rules["equity_ratio_improve"]
+    debt_ratio_change = safe_number(item.get("debt_ratio_change"))
+    if (
+        debt_ratio_change is not None
+        and debt_ratio_change <= positive_rules["debt_ratio_down"]["threshold"]
+    ):
+        rule = positive_rules["debt_ratio_down"]
         signals.append(make_signal(
             year,
             "positive",
             rule["severity"],
             rule["signal"],
-            rule["description_template"].format(value=equity_ratio_change),
-            signal_code="EQUITY_RATIO_IMPROVE",
-            metric_key="equity_ratio",
+            rule["description_template"].format(value=debt_ratio_change),
+            signal_code="DEBT_RATIO_DOWN",
+            metric_key="debt_ratio",
         ))
 
-    borrowings_dependency_change = item.get("borrowings_dependency_change")
-    if (
-        borrowings_dependency_change is not None
-        and borrowings_dependency_change <= positive_rules["borrowings_dependency_down"]["threshold"]
-    ):
-        rule = positive_rules["borrowings_dependency_down"]
-        signals.append(make_signal(
-            year,
-            "positive",
-            rule["severity"],
-            rule["signal"],
-            rule["description_template"].format(value=borrowings_dependency_change),
-            signal_code="BORROWINGS_DEPENDENCY_DOWN",
-            metric_key="borrowings_dependency",
-        ))
-
-    operating_cash_flow = item.get("operating_cash_flow")
-    net_income = item.get("net_income")
-    if (
-        operating_cash_flow is not None
-        and net_income is not None
-        and operating_cash_flow > 0
-        and operating_cash_flow > net_income
-    ):
-        rule = positive_rules["cash_flow_strong"]
-        signals.append(make_signal(
-            year,
-            "positive",
-            rule["severity"],
-            rule["signal"],
-            rule["description"],
-            signal_code="CASH_FLOW_STRONG",
-            metric_key="operating_cash_flow",
-        ))
+    operating_cash_flow = safe_number(item.get("operating_cash_flow"))
+    previous_operating_cash_flow = None
 
     if previous_item:
-        previous_operating_income = previous_item.get("operating_income")
-        current_operating_income = item.get("operating_income")
+        previous_operating_cash_flow = safe_number(previous_item.get("operating_cash_flow"))
 
-        if (
-            previous_operating_income is not None
-            and current_operating_income is not None
-            and previous_operating_income < 0
-            and current_operating_income > 0
-        ):
+    if (
+        operating_cash_flow is not None
+        and previous_operating_cash_flow is not None
+        and previous_operating_cash_flow > 0
+    ):
+        cash_flow_yoy = (
+            (operating_cash_flow - previous_operating_cash_flow)
+            / previous_operating_cash_flow
+        ) * 100
+
+        if cash_flow_yoy >= positive_rules["cash_flow_strong"]["threshold"]:
+            rule = positive_rules["cash_flow_strong"]
             signals.append(make_signal(
                 year,
                 "positive",
-                "HIGH",
-                "영업이익 흑자 전환",
-                "전년도 적자였던 영업이익이 당해 연도 흑자로 전환되었습니다.",
-                signal_code="OPERATING_INCOME_TURN_TO_PROFIT",
-                metric_key="operating_income",
+                rule["severity"],
+                rule["signal"],
+                rule["description_template"],
+                signal_code="CASH_FLOW_STRONG",
+                metric_key="operating_cash_flow",
             ))
 
 
-def add_industry_specific_signals(signals, item, industry_group, industry_rule):
-    year = item["year"]
+def add_industry_specific_signals(signals, item, previous_item, recent_3_items, industry_group):
+    year = item.get("year")
 
     if industry_group == "tech_equipment":
-        operating_income_yoy = item.get("operating_income_yoy")
+        if is_operating_loss_widening_3y(recent_3_items):
+            signals.append(make_signal(
+                year,
+                "negative",
+                "HIGH",
+                "기술 업종 적자 심화",
+                "최근 3개년 영업손실 규모가 지속적으로 확대되고 있습니다.",
+                signal_code="TECH_LOSS_WIDENING_3Y",
+                metric_key="operating_income",
+            ))
+
+        operating_cash_flow = safe_number(item.get("operating_cash_flow"))
+        total_assets = safe_number(item.get("total_assets"))
+        previous_assets = safe_number(previous_item.get("total_assets")) if previous_item else None
 
         if (
-            operating_income_yoy is not None
-            and operating_income_yoy <= -50
+            operating_cash_flow is not None
+            and operating_cash_flow < 0
+            and total_assets is not None
+            and previous_assets is not None
+            and previous_assets > 0
+        ):
+            asset_growth = ((total_assets - previous_assets) / previous_assets) * 100
+
+            if asset_growth >= 30:
+                signals.append(make_signal(
+                    year,
+                    "negative",
+                    "HIGH",
+                    "기술 업종 공격적 투자 부담",
+                    "영업현금흐름이 음수인 상황에서 자산 규모가 크게 증가했습니다.",
+                    signal_code="TECH_CAPA_EXPANSION_CASH_RISK",
+                    metric_key="operating_cash_flow",
+                ))
+
+    if industry_group == "heavy_manufacturing":
+        operating_margin = safe_number(item.get("operating_margin"))
+        previous_operating_margin = safe_number(previous_item.get("operating_margin")) if previous_item else None
+        interest_coverage_ratio = safe_number(item.get("interest_coverage_ratio"))
+
+        if (
+            operating_margin is not None
+            and previous_operating_margin is not None
+            and previous_operating_margin > 0
+            and interest_coverage_ratio is not None
+        ):
+            margin_drop_rate = (
+                (operating_margin - previous_operating_margin)
+                / previous_operating_margin
+            ) * 100
+
+            if margin_drop_rate <= -50 and interest_coverage_ratio < 1:
+                signals.append(make_signal(
+                    year,
+                    "negative",
+                    "HIGH",
+                    "제조업 수익성 급락 및 이자부담",
+                    "영업이익률이 전년 대비 50% 이상 급락하고 이자보상배율이 1 미만입니다.",
+                    signal_code="MANUFACTURING_MARGIN_DROP_INTEREST_RISK",
+                    metric_key="operating_margin",
+                ))
+
+        cash = safe_number(item.get("cash"))
+        short_term_borrowings = safe_number(item.get("short_term_borrowings"))
+        inventory_yoy = safe_number(item.get("inventory_turnover_yoy"))
+
+        if (
+            cash is not None
+            and short_term_borrowings is not None
+            and inventory_yoy is not None
+            and cash < short_term_borrowings
+            and inventory_yoy <= -30
         ):
             signals.append(make_signal(
                 year,
                 "negative",
                 "HIGH",
-                "기술 업종 수익성 급락",
-                "영업이익이 전년 대비 크게 감소하여 기술 업종 특성상 수익성 변동 위험이 있습니다.",
-                signal_code="TECH_PROFITABILITY_DROP",
-                metric_key="operating_income",
-            ))
-
-    if industry_group == "heavy_manufacturing":
-        inventory_turnover_yoy = item.get("inventory_turnover_yoy")
-        borrowings_dependency_change = item.get("borrowings_dependency_change")
-
-        if inventory_turnover_yoy is not None and inventory_turnover_yoy <= -20:
-            signals.append(make_signal(
-                year,
-                "negative",
-                "MEDIUM",
-                "제조업 재고 부담 증가",
-                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락하여 재고 부담 가능성이 있습니다.",
-                signal_code="MANUFACTURING_INVENTORY_BURDEN",
+                "제조업 재고 부담 및 유동성 위험",
+                "현금성자산이 단기차입금보다 적고 재고 회전 효율이 크게 악화되었습니다.",
+                signal_code="MANUFACTURING_INVENTORY_LIQUIDITY_RISK",
                 metric_key="inventory_turnover",
-            ))
-
-        if borrowings_dependency_change is not None and borrowings_dependency_change >= 5:
-            signals.append(make_signal(
-                year,
-                "negative",
-                "MEDIUM",
-                "제조업 차입 부담 증가",
-                f"차입금의존도가 전년 대비 {borrowings_dependency_change}%p 증가했습니다.",
-                signal_code="MANUFACTURING_BORROWINGS_BURDEN",
-                metric_key="borrowings_dependency",
             ))
 
     if industry_group == "distribution_service":
-        receivables_turnover_yoy = item.get("receivables_turnover_yoy")
-        inventory_turnover_yoy = item.get("inventory_turnover_yoy")
+        operating_margin = safe_number(item.get("operating_margin"))
+        revenue_yoy = safe_number(item.get("revenue_yoy"))
 
-        if receivables_turnover_yoy is not None and receivables_turnover_yoy <= -20:
+        if (
+            operating_margin is not None
+            and revenue_yoy is not None
+            and operating_margin < 2
+            and revenue_yoy < 0
+        ):
             signals.append(make_signal(
                 year,
                 "negative",
                 "MEDIUM",
-                "유통/서비스 채권 회수 둔화",
-                f"매출채권회전율이 전년 대비 {receivables_turnover_yoy}% 하락했습니다.",
-                signal_code="DISTRIBUTION_RECEIVABLES_COLLECTION_SLOWDOWN",
+                "유통 서비스 저마진 및 매출 감소",
+                "영업이익률이 2% 미만이고 매출액이 전년 대비 감소했습니다.",
+                signal_code="DISTRIBUTION_LOW_MARGIN_REVENUE_DROP",
+                metric_key="operating_margin",
+            ))
+
+        receivables_turnover_yoy = safe_number(item.get("receivables_turnover_yoy"))
+        cash = safe_number(item.get("cash"))
+        short_term_borrowings = safe_number(item.get("short_term_borrowings"))
+
+        if (
+            receivables_turnover_yoy is not None
+            and cash is not None
+            and short_term_borrowings is not None
+            and receivables_turnover_yoy <= -20
+            and cash < short_term_borrowings
+        ):
+            signals.append(make_signal(
+                year,
+                "negative",
+                "HIGH",
+                "유통 서비스 현금 회수 지연",
+                "매출채권 회전 효율이 악화되고 현금성자산이 단기차입금보다 적습니다.",
+                signal_code="DISTRIBUTION_COLLECTION_LIQUIDITY_RISK",
                 metric_key="receivables_turnover",
             ))
 
-        if inventory_turnover_yoy is not None and inventory_turnover_yoy <= -20:
+    if industry_group == "construction_order":
+        operating_cash_flow = safe_number(item.get("operating_cash_flow"))
+        short_term_borrowings_change = safe_number(item.get("short_term_borrowings_change"))
+
+        if (
+            operating_cash_flow is not None
+            and operating_cash_flow < 0
+            and short_term_borrowings_change is not None
+            and short_term_borrowings_change >= 50
+        ):
             signals.append(make_signal(
                 year,
                 "negative",
-                "MEDIUM",
-                "유통 재고 회전 둔화",
-                f"재고자산회전율이 전년 대비 {inventory_turnover_yoy}% 하락했습니다.",
-                signal_code="DISTRIBUTION_INVENTORY_TURNOVER_DROP",
-                metric_key="inventory_turnover",
+                "HIGH",
+                "수주형 업종 현금흐름 및 단기차입 위험",
+                "영업활동현금흐름이 음수이고 단기차입금이 전년 대비 크게 증가했습니다.",
+                signal_code="CONSTRUCTION_CASH_FLOW_SHORT_BORROWING_RISK",
+                metric_key="operating_cash_flow",
             ))
 
-    if industry_group == "construction_order":
-        operating_cash_flow = item.get("operating_cash_flow")
-        net_income = item.get("net_income")
+        operating_cash_flow = safe_number(item.get("operating_cash_flow"))
+        net_income = safe_number(item.get("net_income"))
 
         if (
             operating_cash_flow is not None
@@ -449,24 +521,34 @@ def add_industry_specific_signals(signals, item, industry_group, industry_rule):
                 "negative",
                 "HIGH",
                 "수주형 업종 현금흐름 악화",
-                "순이익은 흑자이나 영업활동현금흐름이 음수로 수주형 업종의 현금 회수 위험이 있습니다.",
+                "순이익은 흑자이나 영업활동현금흐름이 음수입니다.",
                 signal_code="CONSTRUCTION_CASH_FLOW_RISK",
                 metric_key="operating_cash_flow",
             ))
 
     if industry_group == "facility_service":
-        interest_coverage_ratio = item.get("interest_coverage_ratio")
+        interest_expense = safe_number(item.get("interest_expense"))
+        revenue = safe_number(item.get("revenue"))
+        operating_income = safe_number(item.get("operating_income"))
 
-        if interest_coverage_ratio is not None and interest_coverage_ratio < 2:
-            signals.append(make_signal(
-                year,
-                "negative",
-                "MEDIUM",
-                "장치형 서비스 이자 부담 주의",
-                "이자보상배율이 2 미만으로 장치형 서비스업의 금융비용 부담을 점검해야 합니다.",
-                signal_code="FACILITY_SERVICE_INTEREST_BURDEN",
-                metric_key="interest_coverage_ratio",
-            ))
+        if (
+            interest_expense is not None
+            and revenue is not None
+            and revenue > 0
+            and operating_income is not None
+        ):
+            interest_to_revenue = (interest_expense / revenue) * 100
+
+            if interest_to_revenue > 10 and operating_income < 0:
+                signals.append(make_signal(
+                    year,
+                    "negative",
+                    "HIGH",
+                    "장치형 서비스 금융비용 부담",
+                    "매출액 대비 이자비용 비중이 높고 영업손실이 발생했습니다.",
+                    signal_code="FACILITY_SERVICE_INTEREST_BURDEN",
+                    metric_key="interest_expense",
+                ))
 
 
 def remove_duplicate_signals(signals):
@@ -493,13 +575,21 @@ def remove_duplicate_signals(signals):
 def generate_signals(finance_summary, industry_info=None):
     signals = []
 
+    if not finance_summary:
+        return signals
+
+    finance_summary = sorted(
+        finance_summary,
+        key=lambda item: item.get("year") or 0
+    )
+
     common_rules = get_common_trigger_rules()
 
     industry_group = "unknown"
     if industry_info:
         industry_group = industry_info.get("industry_group") or "unknown"
 
-    industry_rule = get_industry_trigger_rules(industry_group)
+    get_industry_trigger_rules(industry_group)
 
     if industry_info and industry_info.get("is_excluded"):
         return [
@@ -513,22 +603,42 @@ def generate_signals(finance_summary, industry_info=None):
                 "description": industry_info.get(
                     "reason",
                     "해당 업종은 일반 재무 Trigger 분석 대상에서 제외됩니다."
-                )
+                ),
             }
         ]
 
     previous_item = None
 
-    for item in finance_summary:
-        add_common_negative_signals(signals, item, previous_item, common_rules)
-        add_common_positive_signals(signals, item, previous_item, common_rules)
-        add_industry_specific_signals(signals, item, industry_group, industry_rule)
+    for index, item in enumerate(finance_summary):
+        recent_3_items = get_recent_items(finance_summary, index, 3)
+
+        add_common_negative_signals(
+            signals,
+            item,
+            recent_3_items,
+            common_rules,
+        )
+
+        add_common_positive_signals(
+            signals,
+            item,
+            previous_item,
+            recent_3_items,
+            common_rules,
+        )
+
+        add_industry_specific_signals(
+            signals,
+            item,
+            previous_item,
+            recent_3_items,
+            industry_group,
+        )
 
         previous_item = item
 
     return remove_duplicate_signals(signals)
 
 
-# 기존 코드 호환용
 def generate_warning_signals(finance_summary):
     return generate_signals(finance_summary)
