@@ -53,7 +53,7 @@ def fail_response(message="요청 실패", data=None):
 
 def to_bool(value, default=False):
     """
-    request.data에서 넘어온 값을 bool로 변환합니다.
+    request.data 또는 query_params에서 넘어온 값을 bool로 변환합니다.
     """
 
     if value is None:
@@ -68,13 +68,35 @@ def to_bool(value, default=False):
     return bool(value)
 
 
+def get_request_value(request, key, default=None):
+    """
+    GET query_params와 POST data 양쪽에서 값을 안전하게 가져옵니다.
+    """
+
+    if request.method == "GET":
+        return request.query_params.get(key, default)
+
+    return request.data.get(key, default)
+
+
+def get_request_bool(request, key, default=False):
+    """
+    GET/POST 요청에서 bool 옵션 값을 읽습니다.
+    """
+
+    return to_bool(
+        get_request_value(request, key, default),
+        default=default,
+    )
+
+
 def inject_mock_disclosures_for_chat(ai_report_result, stock_code):
     """
     disclosure_retriever.py가 아직 구현되지 않은 상태에서
-    챗봇 테스트/발표용으로 sample_disclosure_data.py의 Mock 공시 근거를 주입합니다.
+    테스트/발표용으로 sample_disclosure_data.py의 Mock 공시 근거를 주입합니다.
 
-    실제 Vector DB 연결 후에는 이 함수 사용을 중단하고,
-    disclosure_retriever.py 결과를 evidence_disclosures로 연결하면 됩니다.
+    실제 Vector DB 연결 후에는 이 함수 대신 disclosure_retriever.py 결과를
+    evidence_disclosures로 연결하면 됩니다.
     """
 
     try:
@@ -118,9 +140,235 @@ def inject_mock_disclosures_for_chat(ai_report_result, stock_code):
         "enabled": False,
         "source": "mock_disclosure",
         "evidence_disclosure_count": len(evidence_disclosures),
-        "reason": "disclosure_retriever.py is not implemented. Mock disclosures are injected for chat API.",
+        "reason": "disclosure_retriever.py is not implemented. Mock disclosures are injected for API test.",
     }
     ai_report_result["disclosure_result"] = disclosure_result
+
+    return ai_report_result
+
+
+def build_ai_report_result_once(
+    stock_code,
+    use_mock_disclosures=False,
+    include_searched_news=False,
+    max_total_news_results=20,
+):
+    """
+    AI 리포트 생성 체인을 1회 실행합니다.
+
+    이 함수는 화면 최초 진입 또는 리포트 생성 버튼 클릭 시 한 번만 호출되는 것을 목표로 합니다.
+    챗봇 질문마다 호출하면 응답 시간이 길어질 수 있습니다.
+    """
+
+    from src.services.report_service import build_report_response
+    from src.ai.backend_payload_adapter import build_ai_input_from_backend_response
+    from src.ai.comprehensive_report_service import create_ai_report
+
+    report_response = build_report_response(stock_code)
+
+    if report_response.get("status") == "fail":
+        return report_response
+
+    ai_input = build_ai_input_from_backend_response(report_response)
+
+    ai_report_result = create_ai_report(
+        ai_input=ai_input,
+        vector_store=None,
+        max_results_per_query=5,
+        max_total_news_results=max_total_news_results,
+        max_evidence_news=5,
+        include_searched_news=include_searched_news,
+    )
+
+    # chat_context_builder.py가 정량 재무 데이터를 사용할 수 있도록 보강합니다.
+    ai_report_result["finance_summary"] = ai_input.get("finance_summary", []) or []
+    ai_report_result["financial_metrics"] = ai_input.get("financial_metrics", {}) or {}
+    ai_report_result["signals"] = ai_input.get("signals", []) or ai_report_result.get("signals", [])
+    ai_report_result["detected_changes"] = ai_input.get("detected_changes", []) or ai_report_result.get("detected_changes", [])
+    ai_report_result["all_detected_changes"] = ai_input.get("all_detected_changes", []) or ai_report_result.get("all_detected_changes", [])
+
+    if use_mock_disclosures:
+        ai_report_result = inject_mock_disclosures_for_chat(
+            ai_report_result=ai_report_result,
+            stock_code=stock_code,
+        )
+
+    metadata = ai_report_result.get("metadata", {}) or {}
+    metadata["generated_by_endpoint"] = "ai_comprehensive_report"
+    metadata["use_mock_disclosures"] = use_mock_disclosures
+    ai_report_result["metadata"] = metadata
+
+    return {
+        "status": "success",
+        "message": "AI 종합 리포트 생성 성공",
+        "data": ai_report_result,
+    }
+
+
+def get_ai_report_result_from_request(request):
+    """
+    프론트에서 전달한 이미 생성된 AI 리포트 JSON을 여러 key 이름으로 허용합니다.
+    """
+
+    candidates = [
+        "ai_report_result",
+        "aiReportResult",
+        "report_result",
+        "reportResult",
+        "ai_report",
+        "aiReport",
+    ]
+
+    for key in candidates:
+        value = request.data.get(key)
+
+        if isinstance(value, dict):
+            return value
+
+    return None
+
+
+def get_report_data_from_request(request):
+    """
+    프론트가 별도로 넘긴 정량 리포트 데이터를 가져옵니다.
+
+    기존 프론트 응답 구조를 고려해 reportData/report_data 둘 다 허용합니다.
+    """
+
+    candidates = [
+        "report_data",
+        "reportData",
+        "backend_report_data",
+        "backendReportData",
+    ]
+
+    for key in candidates:
+        value = request.data.get(key)
+
+        if isinstance(value, dict):
+            return value
+
+    return {}
+
+
+def hydrate_ai_report_result_for_chat(
+    ai_report_result,
+    request,
+    stock_code,
+    use_mock_disclosures=False,
+):
+    """
+    챗봇 context 생성을 위해 ai_report_result에 부족한 필드를 보강합니다.
+
+    프론트가 ai_report_result와 별도로 finance_summary, signals, detected_changes,
+    evidence_news, evidence_disclosures 등을 넘기는 경우 이를 합쳐줍니다.
+    """
+
+    ai_report_result = ai_report_result or {}
+    report_data = get_report_data_from_request(request)
+
+    finance_summary = (
+        ai_report_result.get("finance_summary")
+        or request.data.get("finance_summary")
+        or report_data.get("finance_summary")
+        or []
+    )
+
+    if finance_summary:
+        ai_report_result["finance_summary"] = finance_summary
+
+    financial_metrics = (
+        ai_report_result.get("financial_metrics")
+        or request.data.get("financial_metrics")
+        or {}
+    )
+
+    if financial_metrics:
+        ai_report_result["financial_metrics"] = financial_metrics
+
+    company_info = (
+        ai_report_result.get("company_info")
+        or request.data.get("company_info")
+        or report_data.get("company_info")
+        or {}
+    )
+
+    if company_info:
+        ai_report_result["company_info"] = company_info
+
+    industry_info = (
+        ai_report_result.get("industry_info")
+        or request.data.get("industry_info")
+        or report_data.get("industry_info")
+        or {}
+    )
+
+    if industry_info:
+        ai_report_result["industry_info"] = industry_info
+
+    signals = (
+        ai_report_result.get("signals")
+        or request.data.get("signals")
+        or report_data.get("signals")
+        or []
+    )
+
+    if signals:
+        ai_report_result["signals"] = signals
+
+    detected_changes = (
+        ai_report_result.get("detected_changes")
+        or request.data.get("detected_changes")
+        or report_data.get("detected_changes")
+        or []
+    )
+
+    if detected_changes:
+        ai_report_result["detected_changes"] = detected_changes
+
+    all_detected_changes = (
+        ai_report_result.get("all_detected_changes")
+        or request.data.get("all_detected_changes")
+        or request.data.get("allDetectedChanges")
+        or detected_changes
+        or []
+    )
+
+    if all_detected_changes:
+        ai_report_result["all_detected_changes"] = all_detected_changes
+
+    evidence_news = (
+        ai_report_result.get("evidence_news")
+        or request.data.get("evidence_news")
+        or request.data.get("evidenceNews")
+        or []
+    )
+
+    if evidence_news:
+        ai_report_result["evidence_news"] = evidence_news
+
+    evidence_disclosures = (
+        ai_report_result.get("evidence_disclosures")
+        or request.data.get("evidence_disclosures")
+        or request.data.get("evidenceDisclosures")
+        or []
+    )
+
+    if evidence_disclosures:
+        ai_report_result["evidence_disclosures"] = evidence_disclosures
+
+    if use_mock_disclosures and not ai_report_result.get("evidence_disclosures"):
+        ai_report_result = inject_mock_disclosures_for_chat(
+            ai_report_result=ai_report_result,
+            stock_code=stock_code,
+        )
+
+    metadata = ai_report_result.get("metadata", {}) or {}
+    metadata["hydrated_for_chat"] = True
+    metadata["chat_finance_summary_count"] = len(ai_report_result.get("finance_summary", []) or [])
+    metadata["chat_evidence_news_count"] = len(ai_report_result.get("evidence_news", []) or [])
+    metadata["chat_evidence_disclosure_count"] = len(ai_report_result.get("evidence_disclosures", []) or [])
+    ai_report_result["metadata"] = metadata
 
     return ai_report_result
 
@@ -240,32 +488,92 @@ def comprehensive_report(request, stock_code):
     )
 
 
+@api_view(["GET", "POST"])
+def ai_comprehensive_report(request, stock_code):
+    """
+    AI 종합 리포트 1회 생성 API입니다.
+
+    Endpoint:
+    GET  /api/v1/report/comprehensive/{stock_code}/ai
+    POST /api/v1/report/comprehensive/{stock_code}/ai
+
+    Query 또는 Body 옵션:
+    {
+        "use_mock_disclosures": true,
+        "include_searched_news": false
+    }
+
+    이 API는 화면 진입 시 또는 리포트 생성 버튼 클릭 시 1회 호출하는 용도입니다.
+    챗봇 질문마다 호출하지 않습니다.
+    """
+
+    print("\n===== [1] ai_comprehensive_report 호출됨 =====")
+    print("[2] stock_code:", stock_code)
+
+    if not stock_code:
+        return fail_response(
+            message="stock_code가 필요합니다.",
+            data=None
+        )
+
+    use_mock_disclosures = get_request_bool(
+        request,
+        "use_mock_disclosures",
+        default=False,
+    )
+    include_searched_news = get_request_bool(
+        request,
+        "include_searched_news",
+        default=False,
+    )
+
+    try:
+        result = build_ai_report_result_once(
+            stock_code=stock_code,
+            use_mock_disclosures=use_mock_disclosures,
+            include_searched_news=include_searched_news,
+            max_total_news_results=20,
+        )
+    except Exception as e:
+        print("[ERROR] ai_comprehensive_report 내부 오류 발생")
+        print(type(e).__name__, str(e))
+
+        return fail_response(
+            message=f"AI 리포트 생성 중 오류 발생: {str(e)}",
+            data=None
+        )
+
+    if result.get("status") == "fail":
+        return fail_response(
+            message=result.get("message", "AI 리포트 생성 실패"),
+            data=result.get("data")
+        )
+
+    return success_response(
+        data=result.get("data"),
+        message="AI 종합 리포트 생성 성공"
+    )
+
+
 @api_view(["POST"])
 def report_chat(request, stock_code):
     """
-    종합 재무 리포트 기반 Q&A 챗봇 API입니다.
+    이미 생성된 AI 리포트 기반 Q&A 챗봇 API입니다.
 
     Endpoint:
     POST /api/v1/report/comprehensive/{stock_code}/chat
 
-    Request body:
+    권장 Request body:
     {
         "question": "삼성전자는 2023년에 영업이익이 왜 감소했어?",
+        "ai_report_result": {...},
         "use_mock_disclosures": true
     }
 
-    Response data:
-    {
-        "company_info": {...},
-        "industry_info": {...},
-        "analysis_year": 2023,
-        "base_year": 2022,
-        "question": "...",
-        "answer": "...",
-        "used_sources": [...],
-        "limitations": "...",
-        "metadata": {...}
-    }
+    중요:
+    - 기본 동작은 ai_report_result를 받아서 답변만 생성합니다.
+    - 따라서 챗봇 질문마다 create_ai_report()를 다시 실행하지 않습니다.
+    - 테스트/비상용으로 allow_generate_report=true를 보내면 기존처럼 내부에서 리포트를 생성합니다.
     """
 
     print("\n===== [1] report_chat 호출됨 =====")
@@ -289,48 +597,69 @@ def report_chat(request, stock_code):
         request.data.get("use_mock_disclosures"),
         default=False,
     )
+    allow_generate_report = to_bool(
+        request.data.get("allow_generate_report"),
+        default=False,
+    )
+
+    received_ai_report_result = False
+    generated_ai_report_inside_chat = False
 
     try:
-        from src.services.report_service import build_report_response
-        from src.ai.backend_payload_adapter import build_ai_input_from_backend_response
-        from src.ai.comprehensive_report_service import create_ai_report
         from src.ai.chat_context_builder import build_chat_context
         from src.ai.llm_client import get_llm
         from src.ai.report_chat_chain import answer_report_question
 
-        print("[3] build_report_response 실행")
-        report_response = build_report_response(stock_code)
+        ai_report_result = get_ai_report_result_from_request(request)
 
-        if report_response.get("status") == "fail":
-            return fail_response(
-                message=report_response.get("message", "리포트 조회 실패"),
-                data=report_response.get("data")
+        if ai_report_result:
+            received_ai_report_result = True
+            print("[3] 요청 body의 ai_report_result 사용")
+        elif allow_generate_report:
+            generated_ai_report_inside_chat = True
+            print("[3] allow_generate_report=True이므로 내부에서 AI 리포트 생성")
+            result = build_ai_report_result_once(
+                stock_code=stock_code,
+                use_mock_disclosures=use_mock_disclosures,
+                include_searched_news=False,
+                max_total_news_results=20,
             )
 
-        print("[4] backend_payload_adapter 실행")
-        ai_input = build_ai_input_from_backend_response(report_response)
+            if result.get("status") == "fail":
+                return fail_response(
+                    message=result.get("message", "AI 리포트 생성 실패"),
+                    data=result.get("data")
+                )
 
-        print("[5] create_ai_report 실행")
-        ai_report_result = create_ai_report(
-            ai_input=ai_input,
-            vector_store=None,
-            max_results_per_query=5,
-            max_total_news_results=20,
-            max_evidence_news=5,
-            include_searched_news=False,
+            ai_report_result = result.get("data")
+        else:
+            return fail_response(
+                message=(
+                    "ai_report_result가 필요합니다. "
+                    "먼저 /api/v1/report/comprehensive/{stock_code}/ai 에서 AI 리포트를 생성한 뒤, "
+                    "그 결과를 챗봇 API에 전달하세요. "
+                    "테스트용으로 기존 방식이 필요하면 allow_generate_report=true를 보내세요."
+                ),
+                data={
+                    "required_body_example": {
+                        "question": "삼성전자는 2023년에 영업이익이 왜 감소했어?",
+                        "ai_report_result": "{...}",
+                        "use_mock_disclosures": True,
+                    }
+                }
+            )
+
+        ai_report_result = hydrate_ai_report_result_for_chat(
+            ai_report_result=ai_report_result,
+            request=request,
+            stock_code=stock_code,
+            use_mock_disclosures=use_mock_disclosures,
         )
 
-        if use_mock_disclosures:
-            print("[6] 공시 Mock 근거 주입")
-            ai_report_result = inject_mock_disclosures_for_chat(
-                ai_report_result=ai_report_result,
-                stock_code=stock_code,
-            )
-
-        print("[7] chat_context_builder 실행")
+        print("[4] chat_context_builder 실행")
         chat_context = build_chat_context(ai_report_result)
 
-        print("[8] report_chat_chain 실행")
+        print("[5] report_chat_chain 실행")
         llm = get_llm()
         chat_answer = answer_report_question(
             llm=llm,
@@ -364,6 +693,8 @@ def report_chat(request, stock_code):
             "chat_context": chat_context.get("metadata", {}),
             "ai_report": ai_report_result.get("metadata", {}),
             "use_mock_disclosures": use_mock_disclosures,
+            "received_ai_report_result": received_ai_report_result,
+            "generated_ai_report_inside_chat": generated_ai_report_inside_chat,
         },
     }
 
