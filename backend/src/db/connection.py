@@ -1,6 +1,6 @@
 import pymysql
 
-from core.config import (
+from src.core.config import (
     MYSQL_HOST,
     MYSQL_PORT,
     MYSQL_USER,

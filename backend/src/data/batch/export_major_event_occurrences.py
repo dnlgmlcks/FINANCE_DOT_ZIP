@@ -16,6 +16,7 @@ import csv
 import json
 import re
 import time
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -407,20 +408,48 @@ def export_batches(
     return results
 
 
+def five_years_before(run_date: date) -> date:
+    try:
+        return run_date.replace(year=run_date.year - 5)
+    except ValueError:
+        return run_date.replace(year=run_date.year - 5, day=28)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Export structured OpenDART DS005 event occurrences."
     )
+    today = date.today()
+    default_bgn_de = five_years_before(today).strftime("%Y%m%d")
+    default_end_de = today.strftime("%Y%m%d")
     parser.add_argument("--batch-id", default="kospi_001")
     parser.add_argument(
         "--all-batches",
         action="store_true",
         help="Export all prepared company batches.",
     )
-    parser.add_argument("--company-limit", type=int, default=50)
-    parser.add_argument("--event-limit", type=int, default=30)
-    parser.add_argument("--bgn-de", default="20190101")
-    parser.add_argument("--end-de", default="20260512")
+    parser.add_argument(
+        "--company-limit",
+        type=int,
+        default=0,
+        help="Maximum companies to check per batch. Use 0 for no limit.",
+    )
+    parser.add_argument(
+        "--event-limit",
+        type=int,
+        default=0,
+        help="Maximum positive event rows to write per batch. Use 0 for no limit.",
+    )
+    parser.add_argument(
+        "--bgn-de",
+        default=default_bgn_de,
+        help="Disclosure search start date in YYYYMMDD. Defaults to five years before the run date.",
+    )
+    parser.add_argument(
+        "--end-de",
+        default=default_end_de,
+        help="Disclosure search end date in YYYYMMDD. Defaults to the run date.",
+    )
     parser.add_argument("--sleep-interval", type=float, default=0.05)
     parser.add_argument(
         "--output-root",

@@ -4,11 +4,12 @@ import csv
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = BASE_DIR.parent.parent
+BACKEND_ROOT = BASE_DIR.parent
 
-sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(BACKEND_ROOT))
 
-from db.connection import get_connection
-from services.financial_processor import find_standard_account_in_item
+from src.db.connection import get_connection
+from src.services.financial_processor import find_standard_account_in_item
 
 
 EXPORT_DIR = PROJECT_ROOT / "data" / "export"

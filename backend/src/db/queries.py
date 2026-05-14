@@ -1,4 +1,4 @@
-from db.connection import get_connection
+from src.db.connection import get_connection
 
 
 def fetch_financials_by_stock_code(stock_code: str):
@@ -47,3 +47,44 @@ def fetch_company_info_by_stock_code(stock_code: str):
 
     finally:
         conn.close()
+
+
+def search_companies(keyword: str, limit: int = 20):
+    keyword = (keyword or "").strip()
+    if not keyword:
+        return []
+
+    conn = get_connection()
+
+    try:
+        with conn.cursor() as cursor:
+            like_keyword = f"%{keyword}%"
+            cursor.execute(
+                """
+                SELECT
+                    stock_code,
+                    corp_code,
+                    company_name,
+                    induty_code
+                FROM companies
+                WHERE company_name LIKE %s
+                   OR stock_code LIKE %s
+                ORDER BY company_name ASC
+                LIMIT %s
+                """,
+                (like_keyword, like_keyword, limit)
+            )
+            rows = cursor.fetchall()
+
+    finally:
+        conn.close()
+
+    return [
+        {
+            **row,
+            "CORP_NAME": row.get("company_name", ""),
+            "CORP_CODE": row.get("stock_code", ""),
+            "TICKER": row.get("stock_code", ""),
+        }
+        for row in rows
+    ]

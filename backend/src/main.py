@@ -9,15 +9,15 @@ from datetime import datetime
 import time
 
 # src 디렉토리를 Python 경로에 추가
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from core.config import (
+from src.core.config import (
     DART_API_KEY, TARGET_STOCK_CODE, TARGET_COMPANY_NAME, 
     TARGET_REPORT_CODE, TARGET_YEARS, ensure_data_dirs, validate_config
 )
-from data.dart_api import DartAPIClient
+from src.data.dart_api import DartAPIClient
 
-from data.process_financials import main as process_financials
+from src.data.process_financials import main as process_financials
 
 def main(args):
     """

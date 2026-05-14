@@ -23,7 +23,8 @@ from dotenv import load_dotenv
 # src 경로를 명시적으로 추가합니다.
 BASE_DIR = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(BASE_DIR))
+BACKEND_ROOT = BASE_DIR.parent
+sys.path.insert(0, str(BACKEND_ROOT))
 
 # 기존 설정 모듈은 backend/.env를 우선 찾기 때문에, 프로젝트 루트 .env와
 # 프로젝트 내부 data 경로를 먼저 환경변수로 주입합니다. API 키 값은 출력하지 않습니다.
@@ -32,7 +33,7 @@ os.environ.setdefault("DATA_RAW_PATH", str(PROJECT_ROOT / "data" / "raw"))
 os.environ.setdefault("DATA_INTERIM_PATH", str(PROJECT_ROOT / "data" / "interim"))
 os.environ.setdefault("DATA_PROCESSED_PATH", str(PROJECT_ROOT / "data" / "processed"))
 
-from services.financial_processor import (
+from src.services.financial_processor import (
     ALL_STANDARD_ACCOUNTS,
     CURRENT_SIGNAL_REQUIRED_ACCOUNTS,
     NOT_REQUIRED_FOR_CURRENT_SIGNAL_ACCOUNTS,
