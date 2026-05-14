@@ -2,224 +2,186 @@
 AI 연동용 detected_changes 생성 모듈
 
 역할:
-- signal_service.py에서 생성된 signals를
-  AI 파트가 사용하기 쉬운 detected_changes 구조로 변환
-- Tavily 검색 키워드 생성에 바로 사용할 수 있도록
-  metric_key, signal_code, search_keywords, query_hint 포함
+- signal_service.py에서 생성된 signals를 AI 파트가 사용하기 쉬운 구조로 변환
+- signal_code 기반으로 안정적으로 매핑
+- Tavily / Vector DB 검색에 사용할 query_hint, search_keywords 포함
 """
 
 
 SIGNAL_TO_CHANGE_RULES = {
-    # Negative signals
-    "매출 급감": {
+    "REVENUE_DROP_50": {
         "metric_key": "revenue",
         "metric_label": "매출액",
         "change_type": "sharp_decrease",
         "direction": "decrease",
-        "search_keywords": ["매출 감소", "수요 둔화", "실적 부진"],
+        "search_keywords": ["매출 급감", "수요 둔화", "실적 부진", "업황 악화"],
     },
-    "매출액 급감": {
-        "metric_key": "revenue",
-        "metric_label": "매출액",
-        "change_type": "sharp_decrease",
-        "direction": "decrease",
-        "search_keywords": ["매출 감소", "수요 둔화", "실적 부진"],
-    },
-    "영업이익 급감": {
+    "OPERATING_LOSS_3Y": {
         "metric_key": "operating_income",
         "metric_label": "영업이익",
-        "change_type": "sharp_decrease",
+        "change_type": "continuous_loss",
         "direction": "decrease",
-        "search_keywords": ["영업이익 감소", "수익성 악화", "비용 증가", "실적 악화"],
+        "search_keywords": ["영업손실 지속", "수익성 악화", "구조적 적자"],
     },
-    "영업이익 감소": {
-        "metric_key": "operating_income",
-        "metric_label": "영업이익",
-        "change_type": "decrease",
-        "direction": "decrease",
-        "search_keywords": ["영업이익 감소", "수익성 악화", "실적 둔화"],
-    },
-    "영업적자 발생": {
-        "metric_key": "operating_income",
-        "metric_label": "영업이익",
-        "change_type": "turn_to_loss",
-        "direction": "decrease",
-        "search_keywords": ["영업적자", "적자 전환", "수익성 악화", "실적 악화"],
-    },
-    "영업이익 적자 전환": {
-        "metric_key": "operating_income",
-        "metric_label": "영업이익",
-        "change_type": "turn_to_loss",
-        "direction": "decrease",
-        "search_keywords": ["영업이익 적자 전환", "영업손실", "수익성 악화"],
-    },
-    "순손실 발생": {
-        "metric_key": "net_income",
-        "metric_label": "당기순이익",
-        "change_type": "turn_to_loss",
-        "direction": "decrease",
-        "search_keywords": ["당기순손실", "순손실", "적자 전환", "손실 발생"],
-    },
-    "당기순이익 적자": {
-        "metric_key": "net_income",
-        "metric_label": "당기순이익",
-        "change_type": "turn_to_loss",
-        "direction": "decrease",
-        "search_keywords": ["당기순손실", "순이익 감소", "적자 전환"],
-    },
-    "부채비율 과다": {
-        "metric_key": "debt_ratio",
-        "metric_label": "부채비율",
-        "change_type": "high_level",
-        "direction": "increase",
-        "search_keywords": ["부채비율 상승", "차입금 증가", "재무 부담", "유동성 우려"],
-    },
-    "부채비율 200% 초과": {
-        "metric_key": "debt_ratio",
-        "metric_label": "부채비율",
-        "change_type": "high_level",
-        "direction": "increase",
-        "search_keywords": ["부채비율 상승", "차입금 증가", "재무 부담", "유동성 우려"],
-    },
-    "부채비율 급증": {
-        "metric_key": "debt_ratio",
-        "metric_label": "부채비율",
-        "change_type": "increase",
-        "direction": "increase",
-        "search_keywords": ["부채비율 상승", "재무구조 악화", "차입 부담"],
-    },
-    "유동성 위험": {
-        "metric_key": "current_ratio",
-        "metric_label": "유동비율",
-        "change_type": "low_level",
-        "direction": "decrease",
-        "search_keywords": ["유동비율 하락", "유동성 악화", "단기 지급능력"],
-    },
-    "유동비율 100% 미만": {
-        "metric_key": "current_ratio",
-        "metric_label": "유동비율",
-        "change_type": "low_level",
-        "direction": "decrease",
-        "search_keywords": ["유동비율 하락", "유동성 악화", "단기 지급능력"],
-    },
-    "이자상환 위험": {
+    "INTEREST_COVERAGE_3Y_LOW": {
         "metric_key": "interest_coverage_ratio",
         "metric_label": "이자보상배율",
         "change_type": "low_level",
         "direction": "decrease",
-        "search_keywords": ["이자보상배율 하락", "금융비용 부담", "이자비용 증가"],
+        "search_keywords": ["이자보상배율 하락", "금융비용 부담", "한계기업"],
     },
-    "이자보상배율 1 미만": {
-        "metric_key": "interest_coverage_ratio",
-        "metric_label": "이자보상배율",
-        "change_type": "low_level",
+    "CASH_FLOW_NEGATIVE_3Y": {
+        "metric_key": "operating_cash_flow",
+        "metric_label": "영업활동현금흐름",
+        "change_type": "continuous_negative",
         "direction": "decrease",
-        "search_keywords": ["이자보상배율 하락", "금융비용 부담", "이자비용 증가"],
+        "search_keywords": ["영업현금흐름 적자", "현금흐름 악화", "유동성 우려"],
     },
-    "매출채권 회전율 악화": {
-        "metric_key": "receivables_turnover",
-        "metric_label": "매출채권회전율",
-        "change_type": "decrease",
+    "CASH_LESS_THAN_SHORT_BORROWINGS": {
+        "metric_key": "cash",
+        "metric_label": "현금성자산",
+        "change_type": "liquidity_shortage",
         "direction": "decrease",
-        "search_keywords": ["매출채권 회수 지연", "대손충당금", "채권 회수"],
+        "search_keywords": ["현금 부족", "단기차입금 부담", "유동성 위험"],
     },
-    "매출채권 회수 지연": {
-        "metric_key": "receivables_turnover",
-        "metric_label": "매출채권회전율",
-        "change_type": "decrease",
+    "DEBT_RATIO_OVER_400": {
+        "metric_key": "debt_ratio",
+        "metric_label": "부채비율",
+        "change_type": "high_level",
+        "direction": "increase",
+        "search_keywords": ["부채비율 과다", "재무 부담", "차입금 증가", "재무구조 악화"],
+    },
+    "CAPITAL_IMPAIRMENT_PARTIAL": {
+        "metric_key": "total_equity",
+        "metric_label": "자본총계",
+        "change_type": "capital_impairment",
         "direction": "decrease",
-        "search_keywords": ["매출채권 회수 지연", "대손충당금", "채권 회수"],
+        "search_keywords": ["부분자본잠식", "자본잠식", "재무구조 악화"],
     },
-    "재고자산 회전율 악화": {
-        "metric_key": "inventory_turnover",
-        "metric_label": "재고자산회전율",
-        "change_type": "decrease",
+    "CAPITAL_IMPAIRMENT_FULL": {
+        "metric_key": "total_equity",
+        "metric_label": "자본총계",
+        "change_type": "full_capital_impairment",
         "direction": "decrease",
-        "search_keywords": ["재고 증가", "재고 부담", "재고자산 평가손실"],
+        "search_keywords": ["완전자본잠식", "자본잠식", "상장폐지 위험"],
     },
-    "재고자산 회전율 하락": {
-        "metric_key": "inventory_turnover",
-        "metric_label": "재고자산회전율",
-        "change_type": "decrease",
-        "direction": "decrease",
-        "search_keywords": ["재고 증가", "재고 부담", "재고자산 평가손실"],
-    },
-    "기술 업종 수익성 급락": {
-        "metric_key": "operating_income",
-        "metric_label": "영업이익",
-        "change_type": "industry_profitability_drop",
-        "direction": "decrease",
-        "search_keywords": ["반도체 업황", "IT 수요 둔화", "수익성 악화", "영업이익 감소"],
-    },
-
-    # Positive signals
-    "매출 퀀텀 점프": {
+    "REVENUE_JUMP": {
         "metric_key": "revenue",
         "metric_label": "매출액",
         "change_type": "sharp_increase",
         "direction": "increase",
         "search_keywords": ["매출 성장", "수요 증가", "신사업 성장", "실적 개선"],
     },
-    "어닝 서프라이즈": {
+    "EARNINGS_SURPRISE": {
         "metric_key": "operating_income",
         "metric_label": "영업이익",
         "change_type": "sharp_increase",
         "direction": "increase",
         "search_keywords": ["어닝 서프라이즈", "영업이익 증가", "실적 개선"],
     },
-    "순이익 고성장": {
-        "metric_key": "net_income",
-        "metric_label": "당기순이익",
-        "change_type": "sharp_increase",
+    "OPERATING_INCOME_TURN_TO_PROFIT": {
+        "metric_key": "operating_income",
+        "metric_label": "영업이익",
+        "change_type": "turnaround",
         "direction": "increase",
-        "search_keywords": ["순이익 증가", "실적 개선", "수익성 개선"],
+        "search_keywords": ["흑자 전환", "턴어라운드", "수익성 개선"],
     },
-    "자기자본비율 개선": {
-        "metric_key": "equity_ratio",
-        "metric_label": "자기자본비율",
-        "change_type": "improve",
-        "direction": "increase",
-        "search_keywords": ["재무구조 개선", "자기자본비율 상승", "부채 감소"],
-    },
-    "재무구조 개선": {
-        "metric_key": "borrowings_dependency",
-        "metric_label": "차입금의존도",
-        "change_type": "improve",
-        "direction": "decrease",
-        "search_keywords": ["차입금 감소", "재무구조 개선", "부채 부담 완화"],
-    },
-    "차입금의존도 감소": {
-        "metric_key": "borrowings_dependency",
-        "metric_label": "차입금의존도",
-        "change_type": "improve",
-        "direction": "decrease",
-        "search_keywords": ["차입금 감소", "재무구조 개선", "부채 부담 완화"],
-    },
-    "현금 창출력 강화": {
-        "metric_key": "operating_cash_flow",
-        "metric_label": "영업활동현금흐름",
-        "change_type": "improve",
-        "direction": "increase",
-        "search_keywords": ["영업현금흐름 개선", "현금 창출력", "현금흐름 개선"],
-    },
-    "Capa 확대": {
-        "metric_key": "total_assets",
-        "metric_label": "자산 규모",
-        "change_type": "capacity_expansion",
-        "direction": "increase",
-        "search_keywords": ["설비 투자", "CAPEX", "생산능력 확대", "투자 확대"],
-    },
-    "자산 가동률 상승": {
+    "ASSET_EFFICIENCY_UP": {
         "metric_key": "asset_turnover",
         "metric_label": "자산회전율",
         "change_type": "improve",
         "direction": "increase",
         "search_keywords": ["자산 효율성 개선", "자산회전율 상승", "운영 효율화"],
     },
+    "CAPACITY_EXPANSION": {
+        "metric_key": "total_assets",
+        "metric_label": "자산 규모",
+        "change_type": "capacity_expansion",
+        "direction": "increase",
+        "search_keywords": ["설비 투자", "CAPEX", "생산능력 확대", "투자 확대"],
+    },
+    "DEBT_RATIO_DOWN": {
+        "metric_key": "debt_ratio",
+        "metric_label": "부채비율",
+        "change_type": "improve",
+        "direction": "decrease",
+        "search_keywords": ["부채비율 감소", "재무구조 개선", "디레버리징"],
+    },
+    "CASH_FLOW_STRONG": {
+        "metric_key": "operating_cash_flow",
+        "metric_label": "영업활동현금흐름",
+        "change_type": "improve",
+        "direction": "increase",
+        "search_keywords": ["영업현금흐름 개선", "현금 창출력", "현금흐름 개선"],
+    },
+    "TECH_LOSS_WIDENING_3Y": {
+        "metric_key": "operating_income",
+        "metric_label": "영업이익",
+        "change_type": "industry_loss_widening",
+        "direction": "decrease",
+        "search_keywords": ["기술 기업 적자 확대", "R&D 비용 부담", "현금 소진"],
+    },
+    "TECH_CAPA_EXPANSION_CASH_RISK": {
+        "metric_key": "operating_cash_flow",
+        "metric_label": "영업활동현금흐름",
+        "change_type": "investment_cash_risk",
+        "direction": "decrease",
+        "search_keywords": ["투자 부담", "현금흐름 악화", "설비투자 리스크"],
+    },
+    "MANUFACTURING_MARGIN_DROP_INTEREST_RISK": {
+        "metric_key": "operating_margin",
+        "metric_label": "영업이익률",
+        "change_type": "profitability_drop",
+        "direction": "decrease",
+        "search_keywords": ["제조업 수익성 악화", "이자 부담", "고정비 부담"],
+    },
+    "MANUFACTURING_INVENTORY_LIQUIDITY_RISK": {
+        "metric_key": "inventory_turnover",
+        "metric_label": "재고자산회전율",
+        "change_type": "inventory_liquidity_risk",
+        "direction": "decrease",
+        "search_keywords": ["재고 부담", "재고 적체", "유동성 위험"],
+    },
+    "DISTRIBUTION_LOW_MARGIN_REVENUE_DROP": {
+        "metric_key": "operating_margin",
+        "metric_label": "영업이익률",
+        "change_type": "low_margin_revenue_drop",
+        "direction": "decrease",
+        "search_keywords": ["저마진", "매출 감소", "유통업 수익성 악화"],
+    },
+    "DISTRIBUTION_COLLECTION_LIQUIDITY_RISK": {
+        "metric_key": "receivables_turnover",
+        "metric_label": "매출채권회전율",
+        "change_type": "collection_liquidity_risk",
+        "direction": "decrease",
+        "search_keywords": ["매출채권 회수 지연", "현금 회전 악화", "유동성 위험"],
+    },
+    "CONSTRUCTION_CASH_FLOW_SHORT_BORROWING_RISK": {
+        "metric_key": "operating_cash_flow",
+        "metric_label": "영업활동현금흐름",
+        "change_type": "cash_flow_borrowing_risk",
+        "direction": "decrease",
+        "search_keywords": ["건설 현금흐름 악화", "단기차입금 증가", "수주형 리스크"],
+    },
+    "CONSTRUCTION_CASH_FLOW_RISK": {
+        "metric_key": "operating_cash_flow",
+        "metric_label": "영업활동현금흐름",
+        "change_type": "cash_flow_risk",
+        "direction": "decrease",
+        "search_keywords": ["수주형 현금흐름 악화", "미청구공사", "공사대금 회수 지연"],
+    },
+    "FACILITY_SERVICE_INTEREST_BURDEN": {
+        "metric_key": "interest_expense",
+        "metric_label": "이자비용",
+        "change_type": "interest_burden",
+        "direction": "increase",
+        "search_keywords": ["장치형 서비스 금융비용", "이자비용 부담", "고정비 부담"],
+    },
 }
 
 
 SEVERITY_MAP = {
+    "CRITICAL": "critical",
     "HIGH": "high",
     "MEDIUM": "medium",
     "LOW": "low",
@@ -304,7 +266,8 @@ def build_detected_change(
     stock_code="",
     industry_group="unknown",
 ):
-    rule = SIGNAL_TO_CHANGE_RULES.get(signal.get("signal"))
+    signal_code = signal.get("signal_code")
+    rule = SIGNAL_TO_CHANGE_RULES.get(signal_code)
 
     if not rule:
         return None
@@ -321,7 +284,6 @@ def build_detected_change(
 
     source_signal = signal.get("signal", "")
     signal_type = signal.get("type", "unknown")
-    signal_code = signal.get("signal_code")
 
     query_hint = f"{company_name} {source_signal} 원인".strip()
 
@@ -330,28 +292,18 @@ def build_detected_change(
         "metric_label": rule["metric_label"],
         "year": year,
         "base_year": base_year,
-
         "change_type": rule["change_type"],
         "direction": rule["direction"],
-
-        "severity": SEVERITY_MAP.get(
-            signal.get("severity"),
-            "medium"
-        ),
-
+        "severity": SEVERITY_MAP.get(signal.get("severity"), "medium"),
         "signal_type": signal_type,
         "signal_code": signal_code,
-
         "company_name": company_name,
         "stock_code": stock_code,
         "industry_group": industry_group,
-
         "current_value": current_value,
         "yoy_change_rate": yoy_change_rate,
-
         "description": signal.get("description", ""),
         "source_signal": source_signal,
-
         "query_hint": query_hint,
         "search_keywords": rule["search_keywords"],
     }
