@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from backend.src.db.queries import search_companies
+from src.db.queries import search_companies
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
