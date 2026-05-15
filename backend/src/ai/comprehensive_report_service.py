@@ -23,6 +23,7 @@ AI 재무 분석 리포트 파이프라인을 하나로 연결하는 상위 서�
 import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional
+import time
 
 from src.ai.financial_context_builder import build_financial_context
 from src.ai.industry_analysis_rules import build_industry_analysis_instruction
@@ -105,6 +106,12 @@ def build_empty_disclosure_result() -> Dict[str, Any]:
             "evidence_disclosure_count": 0,
         },
     }
+
+
+def log_step_time(step_name: str, start_time: float, extra: str = "") -> None:
+    elapsed = time.perf_counter() - start_time
+    suffix = f" | {extra}" if extra else ""
+    print(f"[AI_PIPELINE_TIME] {step_name}: {elapsed:.2f}s{suffix}")
 
 
 # ---------------------------------------------------------------------
@@ -254,17 +261,23 @@ def create_ai_report(
         최종 AI 리포트 JSON
     """
 
+    pipeline_start = time.perf_counter()
+
+    step_start = time.perf_counter()
     llm = get_llm()
     model_name = get_model_name(llm)
+    log_step_time("get_llm", step_start, f"model={model_name}")
 
     industry_info = get_industry_info(ai_input)
     industry_analysis_instruction = build_industry_analysis_instruction(industry_info)
 
     # 1. 재무 문맥 생성
+    step_start = time.perf_counter()
     financial_context = build_financial_context(
         llm=llm,
         ai_input=ai_input,
     )
+    log_step_time("financial_context_builder", step_start)
 
     # financial_context_builder.py가 industry_info를 포함하지 않는 경우에 대비해 보강합니다.
     financial_context["industry_info"] = industry_info
@@ -272,25 +285,38 @@ def create_ai_report(
 
     # 2. 공시 RAG 검색
     # 현재는 disclosure_retriever.py 미구현 상태이므로 빈 결과가 반환됩니다.
+    step_start = time.perf_counter()
     disclosure_result = try_retrieve_disclosure_context(
         ai_input=ai_input,
         vector_store=vector_store,
     )
+    log_step_time(
+        "disclosure_retriever",
+        step_start,
+        f"enabled={(disclosure_result.get('metadata', {}) or {}).get('enabled')}"
+    )
 
     # 3. 뉴스 검색 query 생성
+    step_start = time.perf_counter()
     query_groups = build_news_queries(
         ai_input=ai_input,
         llm=llm,
     )
 
+    query_groups = query_groups[:2]
+    log_step_time("news_query_builder", step_start, f"query_group_count={len(query_groups)}")
+
     # 4. Tavily 뉴스 후보 수집
+    step_start = time.perf_counter()
     searched_news = search_news_by_query_groups(
         query_groups=query_groups,
         max_results_per_query=max_results_per_query,
         max_total_results=max_total_news_results,
     )
+    log_step_time("news_search_service", step_start, f"searched_news_count={len(searched_news)}")
 
     # 5. 뉴스 근거 선별
+    step_start = time.perf_counter()
     evidence = filter_evidence(
         llm=llm,
         ai_input=ai_input,
@@ -299,11 +325,17 @@ def create_ai_report(
         disclosure_context=disclosure_result.get("disclosure_context"),
         max_evidence=max_evidence_news,
     )
+    log_step_time(
+        "news_evidence_filter",
+        step_start,
+        f"evidence_news_count={len(evidence.get('evidence_news', []))}"
+    )
 
     # disclosure_retriever.py가 붙기 전까지는 빈 리스트 유지
     evidence["evidence_disclosures"] = disclosure_result.get("evidence_disclosures", [])
 
     # 6. 최종 리포트 생성
+    step_start = time.perf_counter()
     report = generate_report(
         llm=llm,
         financial_context=financial_context,
@@ -312,8 +344,10 @@ def create_ai_report(
         industry_info=industry_info,
         industry_analysis_instruction=industry_analysis_instruction,
     )
+    log_step_time("report_writer_chain", step_start)
 
     # 7. 최종 JSON 조립
+    step_start = time.perf_counter()
     final_json = build_final_report_json(
         ai_input=ai_input,
         financial_context=financial_context,
@@ -326,6 +360,9 @@ def create_ai_report(
         include_searched_news=include_searched_news,
         industry_analysis_instruction=industry_analysis_instruction,
     )
+    log_step_time("build_final_report_json", step_start)
+
+    log_step_time("TOTAL_create_ai_report", pipeline_start)
 
     return final_json
 
@@ -374,9 +411,9 @@ if __name__ == "__main__":
     result = create_ai_report(
         ai_input=sample_ai_input,
         vector_store=None,
-        max_results_per_query=5,
-        max_total_news_results=20,
-        max_evidence_news=5,
+        max_results_per_query=3,
+        max_total_news_results=10,
+        max_evidence_news=3,
         include_searched_news=False,
     )
 

@@ -152,7 +152,7 @@ def build_ai_report_result_once(
     stock_code,
     use_mock_disclosures=False,
     include_searched_news=False,
-    max_total_news_results=20,
+    max_total_news_results=10,
 ):
     """
     AI 리포트 생성 체인을 1회 실행합니다.
@@ -175,9 +175,9 @@ def build_ai_report_result_once(
     ai_report_result = create_ai_report(
         ai_input=ai_input,
         vector_store=None,
-        max_results_per_query=5,
+        max_results_per_query=3,
         max_total_news_results=max_total_news_results,
-        max_evidence_news=5,
+        max_evidence_news=3,
         include_searched_news=include_searched_news,
     )
 
@@ -540,7 +540,7 @@ def ai_comprehensive_report(request, stock_code):
             stock_code=stock_code,
             use_mock_disclosures=use_mock_disclosures,
             include_searched_news=include_searched_news,
-            max_total_news_results=20,
+            max_total_news_results=10,
         )
     except Exception as e:
         print("[ERROR] ai_comprehensive_report 내부 오류 발생")
