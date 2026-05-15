@@ -29,6 +29,8 @@ function App() {
   const [companyName, setCompanyName]       = useState(null);
   const [stockCode, setStockCode]           = useState(null);
   const [reportData, setReportData]         = useState(null);
+  const [evidenceNews, setEvidenceNews]     = useState([]);
+  const [newsLoading, setNewsLoading]       = useState(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -45,6 +47,26 @@ function App() {
     fetchInitialData();
   }, []);
 
+  const fetchNewsAnalysis = async (code) => {
+    setNewsLoading(true);
+    const options = {
+      svcId:  'aiReport',
+      strUrl: `/api/v1/report/comprehensive/${code}/ai`,
+      method: 'GET',
+      pCall:  (svcId, responseData, errCd) => {
+        if (errCd === 0) {
+          setEvidenceNews(responseData?.data?.evidence_news ?? []);
+        }
+        setNewsLoading(false);
+      },
+    };
+    try {
+      await gfn_transaction(options);
+    } catch {
+      setNewsLoading(false);
+    }
+  };
+
   const handleSearch = async (keyword) => {
     if (!keyword) { alert('검색어를 입력해주세요.'); return; }
 
@@ -52,6 +74,8 @@ function App() {
     setSearchResult(null);
     setCompanyName(null);
     setStockCode(null);
+    setEvidenceNews([]);
+    setNewsLoading(false);
     // 로딩바
     setLoading(true);
 
@@ -78,8 +102,10 @@ function App() {
         } else {
             setSearchResult(responseData.data);
             setCompanyName(responseData.data.reportData?.company_name ?? keyword);
-            setStockCode(responseData.data.reportData?.company_info?.stock_code ?? null);
+            const code = responseData.data.reportData?.company_info?.stock_code ?? null;
+            setStockCode(code);
             setReportData(responseData.data.reportData);
+            if (code) fetchNewsAnalysis(code);
         }
 
         setLoading(false);
@@ -103,7 +129,10 @@ function App() {
 
     switch (activeTab) {
       case 'report':     return <Report reportData={reportData} disclosureData={disclosureData} />;
-      case 'news':       return <NewsAnalysis newsData={newsData} />;
+      case 'news': {
+        const mergedNewsData = { ...newsData, evidence_news: evidenceNews };
+        return <NewsAnalysis newsData={mergedNewsData} newsLoading={newsLoading} />;
+      }
       case 'disclosure': return <Disclosure reportData={reportData} disclosureData={disclosureData} />;
     }
   };

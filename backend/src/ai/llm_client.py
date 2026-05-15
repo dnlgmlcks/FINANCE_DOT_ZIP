@@ -29,7 +29,7 @@ from langchain_openai import ChatOpenAI
 load_dotenv()
 
 
-DEFAULT_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt=4o-mini")
+DEFAULT_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o-mini")
 DEFAULT_TEMPERATURE = float(os.getenv("OPENAI_TEMPERATURE", "0"))
 
 

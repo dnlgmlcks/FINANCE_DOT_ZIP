@@ -34,6 +34,25 @@
   border: 1px solid var(--accent-border);
 }
 
+.na-empty-msg {
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+.na-news-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.na-news-loading-text {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
 .na-model-select {
   background: var(--bg-card, #1c2030);
   border: 1px solid var(--border);

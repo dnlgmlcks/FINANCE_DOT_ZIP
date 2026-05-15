@@ -1,12 +1,12 @@
 /* 뉴스 출처 / 링크 */
 import { useMemo } from 'react';
 
-const MOCK_SOURCES = [
-  { id: 1, outlet: '한국경제',  title: 'HBM3E 수율 개선…삼성, 엔비디아 공급 물량 확대', date: '2026.05.07', url: null },
-  { id: 2, outlet: '조선일보',  title: '미 정부, 삼성 텍사스 공장 보조금 공식 확정', date: '2026.05.06', url: null },
-  { id: 3, outlet: '연합뉴스',  title: '삼성전자, 정관 변경…AI 소프트웨어·로봇 사업 추가', date: '2026.05.05', url: null },
-  { id: 4, outlet: 'Bloomberg', title: 'Samsung eyes HBM4 mass production in H2 2026', date: '2026.05.04', url: null },
-];
+// const MOCK_SOURCES = [
+//   { id: 1, outlet: '한국경제',  title: 'HBM3E 수율 개선…삼성, 엔비디아 공급 물량 확대', date: '2026.05.07', url: null },
+//   { id: 2, outlet: '조선일보',  title: '미 정부, 삼성 텍사스 공장 보조금 공식 확정', date: '2026.05.06', url: null },
+//   { id: 3, outlet: '연합뉴스',  title: '삼성전자, 정관 변경…AI 소프트웨어·로봇 사업 추가', date: '2026.05.05', url: null },
+//   { id: 4, outlet: 'Bloomberg', title: 'Samsung eyes HBM4 mass production in H2 2026', date: '2026.05.04', url: null },
+// ];
 
 const DOMAIN_TO_OUTLET = {
   'hankyung.com':   '한국경제',
@@ -83,7 +83,7 @@ function formatDate(dateStr) {
 
 export default function NewsSource({ evidenceNews }) {
   const sources = useMemo(() => {
-    if (!evidenceNews?.length) return MOCK_SOURCES;
+    if (!evidenceNews?.length) return [];
     return evidenceNews.map((item, i) => ({
       id: i + 1,
       outlet: extractOutlet(item.url),
@@ -96,6 +96,9 @@ export default function NewsSource({ evidenceNews }) {
   return (
     <div className="na-card">
       <h3 className="na-card-title">뉴스 출처</h3>
+      {sources.length === 0 && (
+        <p className="na-empty-msg">뉴스 출처를 불러오지 못했습니다.</p>
+      )}
       <ul className="nso-list">
         {sources.map((src) => (
           <li key={src.id} className="nso-item">
