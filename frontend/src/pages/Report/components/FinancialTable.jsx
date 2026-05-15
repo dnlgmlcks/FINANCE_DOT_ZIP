@@ -106,7 +106,7 @@ export default function FinancialTable({ reportData }) {
               <tr key={label}>
                 <td>{label}</td>
                 {values.map((v, i) => (
-                  <td key={i} className={dirClass(dir[i])}>{v}</td>
+                  <td key={i} className={dirClass(dir[i])}> {activeTab === 'stmt' ? (v != "-" ? Math.round((v?? 0) / 100_000_000): v):  v}</td>
                 ))}
               </tr>
             ))}

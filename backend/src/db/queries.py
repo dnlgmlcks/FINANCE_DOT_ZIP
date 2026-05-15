@@ -88,3 +88,32 @@ def search_companies(keyword: str, limit: int = 20):
         }
         for row in rows
     ]
+
+def search_origin_companies():
+    conn = get_connection()
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    stock_code,
+                    company_name
+                FROM companies
+                """,
+            )
+            rows = cursor.fetchall()
+
+    finally:
+        conn.close()
+
+    return [
+        {
+            **row,
+            "CORP_NAME": row.get("company_name", ""),
+            "CORP_CODE": row.get("stock_code", ""),
+            "TICKER": row.get("stock_code", ""),
+        }
+        for row in rows
+    ]
+

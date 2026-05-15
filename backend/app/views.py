@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from src.db.queries import search_companies
+from src.db.queries import (search_companies, search_origin_companies)
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -386,8 +386,13 @@ def test_api(request):
 
 @api_view(["GET", "POST"])
 def init_data(request):
+    """ 프론트 화면 초기화 시 가져와야 하는 초기 정보 세팅
+        1. 자동완성에 필요한 관리 기업 정보
+    """
+    result = search_origin_companies()
+    # print(len(result))
     return success_response(
-        data=TEMP_COMPANY_DATA,
+        data=result,
         message="초기 기업 데이터 조회 성공"
     )
 
